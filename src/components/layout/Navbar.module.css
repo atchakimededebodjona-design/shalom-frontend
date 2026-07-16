@@ -1,0 +1,106 @@
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 1rem 0;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.brand {
+  font-family: var(--font-brand);
+  font-size: 1.6rem;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Regroupe les liens de navigation (bureau) */
+.desktopLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.desktopOnly {
+  display: flex;
+  align-items: center;
+}
+
+/* Bouton hamburger (mobile uniquement) */
+.burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  padding: 6px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.burger:hover {
+  background: var(--glass-bg);
+}
+
+/* Panneau déroulant (mobile) */
+.mobilePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacing-sm) 0 var(--spacing-xs);
+  animation: navSlide 0.18s ease;
+}
+
+@keyframes navSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mobileLink {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 0.85rem var(--spacing-sm);
+  font-weight: bold;
+  color: var(--text-color);
+  border-radius: var(--radius-md);
+}
+
+.mobileLink:hover {
+  background: var(--glass-bg);
+}
+
+.mobileLinkAdmin {
+  color: var(--primary);
+}
+
+.mobileDivider {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--spacing-xs) 0;
+}
+
+/* --- Bascule responsive --- */
+@media (max-width: 768px) {
+  .desktopLinks { display: none; }
+  .desktopOnly { display: none; }
+  .burger { display: inline-flex; }
+}
+
+@media (min-width: 769px) {
+  .mobilePanel { display: none; }
+}

@@ -1,0 +1,164 @@
+/*
+ * Palette CAMAJ — valeurs échantillonnées sur public/camaj-logo.png
+ * (bleu marine dominant, orange et vert des deux silhouettes).
+ *
+ * `.theme` redéfinit les variables globales pour cette page uniquement :
+ * la Navbar et le Footer, rendus par le layout racine, gardent le doré SHALOM.
+ */
+.theme {
+  --camaj-navy: #012963;
+  --camaj-orange: #FE5901;
+  --camaj-green: #328C28;
+
+  --primary: var(--camaj-navy);
+  --primary-hover: #023B8C;
+  --accent: var(--camaj-orange);
+  --on-primary: #FFFFFF; /* le bleu marine exige un texte clair */
+}
+
+/* Le thème sombre est dormant (layout.js force data-theme="light"), mais
+   variables.css le maintient : sans ceci le marine deviendrait illisible. */
+:global([data-theme='dark']) .theme {
+  --camaj-navy: #6E9BD6;
+  --camaj-orange: #FF7A33;
+  --camaj-green: #56B54A;
+  --on-primary: #06152B;
+}
+
+/* Tuile blanche : le PNG du logo est opaque, un fond blanc explicite
+   évite un carré blanc involontaire sur le gris de la page. */
+.logoTile {
+  display: inline-flex;
+  background: #FFFFFF;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.logo {
+  width: 160px;
+  height: auto;
+  display: block;
+}
+
+/* Rappel tricolore du logo, en filet sous le hero. */
+.tricolor {
+  display: flex;
+  width: 96px;
+  height: 4px;
+  margin: var(--spacing-lg) auto 0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.tricolor span {
+  flex: 1;
+}
+
+.tricolor span:nth-child(1) { background: var(--camaj-navy); }
+.tricolor span:nth-child(2) { background: var(--camaj-orange); }
+.tricolor span:nth-child(3) { background: var(--camaj-green); }
+
+/* Liseré coloré en tête de carte : porte la couleur d'accent du programme. */
+.programCard {
+  border-top: 3px solid var(--card-accent);
+}
+
+/* Pastille numérotée. Le blanc sur l'orange ne donne que 3.15:1 : il faut
+   franchir le seuil "texte large" de WCAG (gras >= 18.66px) pour que 3:1
+   suffise, d'où 1.2rem = 19.2px. Ne pas réduire sans assombrir l'orange. */
+.badge {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  border-radius: var(--radius-full);
+  background-color: var(--card-accent);
+  color: var(--on-primary);
+}
+
+.note {
+  border-left: 2px solid var(--camaj-orange);
+}
+
+/* Appels à l'action : 2 colonnes, 1 seule sous ~560px. */
+.ctaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-md);
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* Le blanc ne donne que 3.15:1 sur l'orange du logo et 4.32:1 sur le vert.
+   Plutôt que de dénaturer les couleurs de la marque, on franchit le seuil
+   "texte large" de WCAG (gras >= 18.66px) : 1.2rem = 19.2px, seuil 3:1. */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ctaSolid {
+  background-color: var(--cta-color);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-md);
+}
+
+.ctaOutline {
+  background-color: var(--bg-color-alt);
+  color: var(--camaj-navy);
+  border-color: var(--camaj-navy);
+}
+
+.ctaOutline:hover {
+  background-color: var(--camaj-navy);
+  color: #FFFFFF;
+}
+
+/* Bouton occupant toute la largeur de la grille (« Faire un Don »). */
+.ctaFull {
+  grid-column: 1 / -1;
+}
+
+/* Panneau « relation d'aide ».
+   Le marine est écrit en dur et non via var(--camaj-navy) : en thème sombre
+   cette variable s'éclaircit, ce qui rendrait le texte blanc illisible. Ce
+   bloc est foncé par construction, dans les deux thèmes. */
+.aide {
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background-color: #012963;
+  text-align: center;
+}
+
+.aideTitre {
+  color: #FFFFFF;
+}
+
+.aideTexte {
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 620px;
+  margin: 0 auto var(--spacing-xl);
+}
+
+.aideBouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-md);
+  background-color: #FFFFFF;
+  color: #012963;
+  font-size: 1.05rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}

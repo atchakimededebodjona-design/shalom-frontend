@@ -1,0 +1,100 @@
+'use client';
+
+import { useAuth } from '../../../contexts/AuthContext';
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { followsService } from '../../../services/follows.service';
+import { profilesService } from '../../../services/profiles.service';
+import { ProfileView } from '../../../components/profile/ProfileView';
+import { ProfileEditForm } from '../../../components/profile/ProfileEditForm';
+import { FollowList } from '../../../components/follows/FollowList';
+import { Modal } from '../../../components/ui/Modal';
+import { Button } from '../../../components/ui/Button';
+import { BackButton } from '../../../components/ui/BackButton';
+
+export default function Profile() {
+  const { user, loading, refreshUser } = useAuth();
+  const router = useRouter();
+
+  const [counts, setCounts] = useState({ followers: null, following: null });
+  const [modal, setModal] = useState(null); // 'followers' | 'following' | 'edit' | null
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  const loadCounts = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const c = await followsService.getCounts(user.id);
+      setCounts(c);
+    } catch {
+      // Compteurs non critiques : on laisse les valeurs actuelles
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    loadCounts();
+  }, [loadCounts]);
+
+  if (loading || !user) {
+    return (
+      <div className="container flex justify-center items-center" style={{ minHeight: '60vh' }}>
+        <div className="animate-pulse">Chargement...</div>
+      </div>
+    );
+  }
+
+  const handleSaved = async () => {
+    setModal(null);
+    await refreshUser(); // resynchronise navbar/composer + cette page
+  };
+
+  // Changement direct d'une photo (profil ou couverture) : persiste puis rafraîchit.
+  // Les erreurs remontent à ProfileView qui les affiche.
+  const handlePhotoChange = useCallback(
+    async (field, url) => {
+      await profilesService.updateMe({ [field]: url });
+      await refreshUser();
+    },
+    [refreshUser]
+  );
+
+  return (
+    <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) 0' }}>
+      <div className="mb-md">
+        <BackButton fallbackHref="/dashboard" />
+      </div>
+
+      <ProfileView
+        profile={user}
+        email={user.email}
+        followersCount={counts.followers}
+        followingCount={counts.following}
+        onOpenFollowers={() => setModal('followers')}
+        onOpenFollowing={() => setModal('following')}
+        editable
+        onPhotoChange={handlePhotoChange}
+        action={
+          <Button variant="secondary" onClick={() => setModal('edit')}>
+            Modifier le profil
+          </Button>
+        }
+      />
+
+      <Modal isOpen={modal === 'followers'} onClose={() => setModal(null)} title="Abonnés">
+        <FollowList userId={user.id} type="followers" onItemClick={() => setModal(null)} />
+      </Modal>
+
+      <Modal isOpen={modal === 'following'} onClose={() => setModal(null)} title="Abonnements">
+        <FollowList userId={user.id} type="following" onItemClick={() => setModal(null)} />
+      </Modal>
+
+      <Modal isOpen={modal === 'edit'} onClose={() => setModal(null)} title="Modifier le profil" maxWidth="560px">
+        <ProfileEditForm profile={user} onSaved={handleSaved} onCancel={() => setModal(null)} />
+      </Modal>
+    </div>
+  );
+}

@@ -1,0 +1,315 @@
+/*
+ * Styles partagés par les formulaires CAMAJ (mentor, adhésion au programme).
+ * Chaque formulaire pose `--form-accent` et `--form-accent-soft` sur sa racine :
+ * marine pour « Devenir Mentor », orange pour « Rejoindre le Programme ».
+ */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Teinte d'accent légère plutôt que var(--bg-color) : celui-ci vaut le gris du
+   fond de page, la pastille s'y fondrait complètement. */
+.iconBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  background-color: var(--form-accent-soft);
+  color: var(--form-accent);
+}
+
+.rule {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: var(--spacing-lg) 0 var(--spacing-xl);
+}
+
+.card {
+  background-color: var(--bg-color-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Deux colonnes, une seule sous ~600px. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+/* Champs qui occupent toute la largeur, quel que soit le nombre de colonnes. */
+.full {
+  grid-column: 1 / -1;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--camaj-navy);
+}
+
+.required {
+  color: #DC2626;
+  margin-left: 2px;
+}
+
+/* theme.css applique un halo violet au focus, vestige d'une palette
+   antérieure. On le ramène à l'accent du formulaire. */
+.card input:focus,
+.card select:focus,
+.card textarea:focus {
+  border-color: var(--form-accent);
+  box-shadow: 0 0 0 2px var(--form-accent-soft);
+}
+
+/* Indicatif + numéro : l'indicatif reste étroit. */
+.phoneRow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: var(--spacing-sm);
+}
+
+.radioRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  padding-top: var(--spacing-xs);
+}
+
+/* Cases à cocher empilées (disponibilités). */
+.checkColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-xs);
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.choice input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--form-accent);
+  cursor: pointer;
+}
+
+.textarea {
+  min-height: 150px;
+  resize: vertical;
+  font-family: var(--font-sans);
+}
+
+/* Compteur de mots, aligné à droite sous la zone de texte. */
+.counter {
+  align-self: flex-end;
+  font-size: 0.8rem;
+}
+
+.counterShort {
+  color: #DC2626;
+}
+
+.counterOk {
+  color: var(--text-muted);
+}
+
+.submit {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--form-accent);
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Bandeau d'état après soumission. */
+.notice {
+  grid-column: 1 / -1;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--form-accent);
+  background-color: var(--form-accent-soft);
+  font-size: 0.95rem;
+}
+
+/* Bandeau d'erreur (échec d'envoi). */
+.noticeError {
+  grid-column: 1 / -1;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border-left: 4px solid #DC2626;
+  background-color: rgba(220, 38, 38, 0.08);
+  color: #B91C1C;
+  font-size: 0.95rem;
+}
+
+/* --- Projet FAJ : encadré des critères d'éligibilité --- */
+/* Marine écrit en dur (comme camaj.module.css) : reste lisible en thème sombre. */
+.criteres {
+  background-color: #012963;
+  color: #F3EFE4;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.criteresTitre {
+  margin: 0 0 var(--spacing-md);
+  font-size: 1.25rem;
+  /* Force la teinte claire : sinon le style global des h2 (marine) l'emporte
+     sur la couleur héritée de l'encadré et le titre devient illisible. */
+  color: #F3EFE4;
+}
+
+.criteresList {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* --- Projet FAJ : zone de dépôt du plan d'affaires --- */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xl);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.dropzone:hover {
+  border-color: var(--form-accent);
+  background-color: var(--form-accent-soft);
+}
+
+.dropzoneHint {
+  font-size: 0.8rem;
+}
+
+.fileName {
+  font-weight: bold;
+  color: var(--form-accent);
+}
+
+/* --- Faire un Don : en-tête centré --- */
+.headerDon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+}
+
+.iconCircle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--form-accent-soft);
+  color: var(--form-accent);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* --- Faire un Don : cartes d'impact --- */
+.impactGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.impactCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  color: #FFFFFF;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* --- Faire un Don : bandeau d'information permanent --- */
+/* Orange écrit en dur (comme l'encadré des critères FAJ) : rendu stable en thème sombre. */
+.banner {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xl);
+  background-color: #FE5901;
+  color: #FFFFFF;
+  font-size: 0.95rem;
+}
+
+.bannerIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* --- Faire un Don : sélecteur de montant --- */
+.montantChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.montantChip {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-color);
+  color: var(--camaj-navy);
+  font-weight: bold;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.montantChip:hover {
+  border-color: var(--form-accent);
+}
+
+.montantChipActive {
+  border-color: var(--form-accent);
+  background-color: var(--form-accent-soft);
+  color: var(--form-accent);
+}

@@ -1,0 +1,230 @@
+/*
+ * Page-hub « Relation d'aide » : hero, cartes de service, section confidentialité.
+ * Marine/couleurs écrits en dur (comme camaj.module.css) : rendu stable en thème sombre.
+ */
+
+.hero {
+  background-color: #012963;
+  color: #F3EFE4;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.heroTitre {
+  color: #FFFFFF;
+  margin: 0 0 var(--spacing-md);
+}
+
+.heroTexte {
+  max-width: 640px;
+  margin: 0 auto;
+  color: rgba(243, 239, 228, 0.85);
+}
+
+/* Cartes de service */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  color: #FFFFFF;
+}
+
+.cardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.cardTitre {
+  margin: 0;
+  font-size: 1.35rem;
+  /* Force le blanc : sinon le style global des h2 (marine) l'emporte sur la
+     couleur héritée de la carte — illisible sur la carte marine. */
+  color: #FFFFFF;
+}
+
+.cardTexte {
+  margin: 0;
+  flex-grow: 1;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.cardBouton {
+  align-self: stretch;
+  text-align: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  color: #FFFFFF;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Section confidentialité */
+.confid {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+  background-color: #012963;
+  color: #F3EFE4;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+}
+
+.confidIcon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #FE5901;
+}
+
+.confidTitre {
+  color: #FFFFFF;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.confidTexte {
+  margin: 0;
+  max-width: 720px;
+  color: rgba(243, 239, 228, 0.85);
+}
+
+/* --- Modale « Demander un accompagnement » --- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* Le haut démarre sous l'en-tête : `--nav-clearance` est calculé au runtime
+     d'après la hauteur réelle de la barre de navigation (plus haute connecté). */
+  padding: var(--nav-clearance, 6rem) var(--spacing-md) var(--spacing-lg);
+  background-color: rgba(6, 15, 35, 0.55);
+  overflow-y: auto;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  /* Hauteur bornée à la zone visible sous l'en-tête : l'en-tête de la modale
+     (titre + croix) reste fixe, seul le corps du formulaire défile en interne.
+     Le sommet ne remonte donc jamais sous la barre de navigation. */
+  max-height: calc(100vh - var(--nav-clearance, 6rem) - var(--spacing-lg));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--bg-color-alt);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.modalHeader {
+  flex-shrink: 0;
+  padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-md);
+}
+
+.modalBody {
+  flex: 1 1 auto;
+  min-height: 0; /* indispensable pour que le défilement interne fonctionne en flex-column */
+  overflow-y: auto;
+  padding: var(--spacing-md) var(--spacing-xl) var(--spacing-xl);
+}
+
+.modalClose {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  background-color: var(--form-accent-soft);
+  color: var(--form-accent);
+}
+
+.modalTitre {
+  margin: 0 0 var(--spacing-xs);
+  padding-right: 2rem;
+  font-size: 1.6rem;
+}
+
+.modalSubtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Bandeau d'urgence (santé mentale) */
+.urgence {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background-color: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: #B91C1C;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.urgenceIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Encadré de consentement */
+.consentBox {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.consentBox input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--form-accent);
+  cursor: pointer;
+}
