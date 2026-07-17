@@ -58,7 +58,7 @@ export default function FinanceOverviewPage() {
   const monthBalance = income - expense;
   const rate = Number(summary?.savings_rate) || 0;
   const breakdown = Object.entries(summary?.category_breakdown || {}).sort((a, b) => b[1] - a[1]);
-  const maxCat = breakdown.length ? breakdown[0][1] : 0;
+  const totalExp = breakdown.reduce((sum, [, v]) => sum + Number(v), 0);
 
   return (
     <div className="flex-col gap-lg" style={{ display: 'flex' }}>
@@ -89,14 +89,17 @@ export default function FinanceOverviewPage() {
           ) : (
             <div>
               {breakdown.map(([name, total]) => {
-                const w = maxCat ? Math.max(4, (total / maxCat) * 100) : 0;
+                const share = totalExp ? (Number(total) / totalExp) * 100 : 0;
                 return (
                   <div key={name} className={styles.breakdownRow}>
-                    <span style={{ flex: '0 0 38%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                    <span style={{ flex: '0 0 32%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
                     <span style={{ flex: 1, height: 8, background: 'var(--bg-color)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
-                      <span style={{ display: 'block', height: '100%', width: `${w}%`, background: 'var(--out)' }} />
+                      <span style={{ display: 'block', height: '100%', width: `${Math.max(2, share)}%`, background: 'var(--out)' }} />
                     </span>
-                    <span className="text-sm font-bold" style={{ flex: 'none' }}>{formatFCFA(total)}</span>
+                    <span style={{ flex: 'none', textAlign: 'right', minWidth: 92 }}>
+                      <span className="text-sm font-bold" style={{ display: 'block' }}>{formatFCFA(total)}</span>
+                      <span className="text-muted" style={{ fontSize: '0.72rem' }}>{share.toFixed(0)} % du total</span>
+                    </span>
                   </div>
                 );
               })}
