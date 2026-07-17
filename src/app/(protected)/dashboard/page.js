@@ -37,8 +37,10 @@ export default function Dashboard() {
             <li className="hover-lift">
               <Link href="/camaj" className="p-sm text-muted" style={{ display: 'block' }}>Programme CAMAJ</Link>
             </li>
+            <li className="hover-lift">
+              <Link href="/finance" className="p-sm text-muted" style={{ display: 'block' }}>Gestion Financière</Link>
+            </li>
             <li className="p-sm text-muted hover-lift" style={{ cursor: 'pointer' }}>Outils SHALOM</li>
-            <li className="p-sm text-muted hover-lift" style={{ cursor: 'pointer' }}>Portefeuille</li>
           </ul>
         </div>
         

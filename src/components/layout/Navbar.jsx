@@ -17,6 +17,7 @@ const LIENS = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/groups', label: 'Groupes' },
   { href: '/messages', label: 'Messages' },
+  { href: '/finance', label: 'Finances' },
   { href: '/profile', label: 'Profil' },
 ];
 
