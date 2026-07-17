@@ -17,6 +17,7 @@ const LIENS = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/groups', label: 'Groupes' },
   { href: '/messages', label: 'Messages' },
+  { href: '/community', label: 'Communauté' },
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/tools', label: 'Outils' },

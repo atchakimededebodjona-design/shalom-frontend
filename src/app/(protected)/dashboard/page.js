@@ -38,6 +38,9 @@ export default function Dashboard() {
               <Link href="/camaj" className="p-sm text-muted" style={{ display: 'block' }}>Programme CAMAJ</Link>
             </li>
             <li className="hover-lift">
+              <Link href="/community" className="p-sm text-muted" style={{ display: 'block' }}>Communauté</Link>
+            </li>
+            <li className="hover-lift">
               <Link href="/spiritual" className="p-sm text-muted" style={{ display: 'block' }}>Outils Spirituels</Link>
             </li>
             <li className="hover-lift">
