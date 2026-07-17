@@ -1,0 +1,168 @@
+/* Styles communs aux écrans « outils » (Spirituel, Outils pratiques).
+   Reprend le vocabulaire visuel de finance.module.css, factorisé pour éviter
+   de le dupliquer dans chaque feature. */
+
+.theme {
+  --ok: #1f9d55;
+  --ok-soft: rgba(31, 157, 85, 0.12);
+  --warn: #d1495b;
+  --warn-soft: rgba(209, 73, 91, 0.12);
+}
+:global([data-theme='dark']) .theme {
+  --ok: #37c07a;
+  --ok-soft: rgba(55, 192, 122, 0.16);
+  --warn: #f0788a;
+  --warn-soft: rgba(240, 120, 138, 0.16);
+}
+
+/* --- Onglets --- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-lg);
+}
+.tab {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text-color); }
+.tabActive { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* --- Cartes --- */
+.card {
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  background: var(--bg-color-alt);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+}
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+.sectionHead h2, .sectionHead h3 { margin: 0; }
+
+/* --- Listes / lignes --- */
+.list { display: flex; flex-direction: column; }
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.row:last-child { border-bottom: none; }
+.rowIcon {
+  flex: none;
+  width: 40px; height: 40px;
+  border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-color);
+  font-size: 1.05rem;
+}
+.rowMain { flex: 1; min-width: 0; }
+.rowTitle { font-weight: 600; }
+.rowMeta { color: var(--text-muted); font-size: 0.8rem; margin-top: 2px; }
+.rowActions { display: flex; gap: var(--spacing-xs); flex: none; }
+.done { text-decoration: line-through; color: var(--text-muted); }
+
+.iconBtn {
+  display: flex;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.iconBtn:hover { color: var(--text-color); background: var(--bg-color); }
+.iconBtnDanger:hover { color: var(--warn); background: var(--warn-soft); }
+
+/* --- Formulaires --- */
+.form { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
+.field { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+.field.full { grid-column: 1 / -1; }
+.label { font-size: 0.85rem; font-weight: 600; }
+.input, .select, .textarea {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-color-alt);
+  color: var(--text-color);
+  font: inherit;
+}
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--primary); }
+.textarea { resize: vertical; min-height: 80px; }
+.actions { display: flex; justify-content: flex-end; gap: var(--spacing-sm); }
+.errorMsg { color: var(--warn); font-size: 0.85rem; }
+.filters { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-md); }
+
+/* --- Progression --- */
+.progressTrack {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--bg-color);
+  overflow: hidden;
+  margin: var(--spacing-sm) 0;
+}
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  transition: width 0.4s ease;
+}
+.progressFillDone { background: var(--ok); }
+
+/* --- Divers --- */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem; font-weight: 600;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+.badgeOk { color: var(--ok); background: var(--ok-soft); border-color: transparent; }
+.badgeWarn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
+.badgePrimary { color: var(--primary); background: rgba(194, 152, 47, 0.14); border-color: transparent; }
+.empty { text-align: center; color: var(--text-muted); padding: var(--spacing-xl) var(--spacing-md); }
+
+/* Verset mis en avant */
+.verse {
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  background: linear-gradient(135deg, rgba(194, 152, 47, 0.14), rgba(27, 58, 91, 0.10));
+  border: 1px solid var(--border-color);
+}
+.verseText { font-size: 1.15rem; line-height: 1.7; font-style: italic; }
+.verseRef { margin-top: var(--spacing-md); font-weight: 700; color: var(--primary); }
+
+/* Résultat de conversion */
+.result {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  word-break: break-all;
+}
+
+@media (max-width: 640px) {
+  .formGrid { grid-template-columns: 1fr; }
+}
