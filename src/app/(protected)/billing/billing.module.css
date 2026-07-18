@@ -1,0 +1,535 @@
+/* src/app/(protected)/billing/billing.module.css — partagé par toutes les pages Reçu+ */
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-2xl);
+}
+
+.containerWide {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-2xl);
+}
+
+.headRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xl);
+}
+
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  transition: color 0.2s ease;
+}
+
+.breadcrumb:hover {
+  color: var(--text-color);
+}
+
+/* --- En-tête entreprise (facture) --- */
+.letterhead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  background: var(--bg-color-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.letterheadLogo {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  background: var(--bg-color);
+}
+
+.letterheadName {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.letterheadMeta {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* --- Hub (cartes de navigation) --- */
+.hubGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.hubCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-color-alt);
+  padding: var(--spacing-xl);
+  text-decoration: none;
+  color: var(--text-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hubCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.hubCardIcon {
+  color: var(--primary);
+}
+
+.hubCardTitle {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.hubCardValue {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+.hubCardDesc {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* --- Cartes / sections génériques --- */
+.card {
+  background: var(--bg-color-alt);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* --- Formulaires --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.colSpan2 {
+  grid-column: span 2;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.helperText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 640px) {
+  .formGrid { grid-template-columns: 1fr; }
+  .colSpan2 { grid-column: span 1; }
+}
+
+/* --- Logo entreprise --- */
+.logoUploadRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.logoPreview {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+.logoPreview:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Boutons --- */
+.btnPrimary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: opacity 0.2s ease;
+}
+
+.btnPrimary:hover { opacity: 0.9; }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnSecondary {
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.btnSecondary:hover { background: var(--border-color); }
+
+.btnDanger {
+  background: transparent;
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.btnDanger:hover { background: rgba(220, 38, 38, 0.08); }
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  transition: color 0.2s ease;
+}
+
+.iconBtn:hover { color: var(--primary); }
+.iconBtnDanger:hover { color: #dc2626; }
+
+/* --- Tableaux --- */
+.tableContainer {
+  background: var(--bg-color-alt);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th, .table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.table th {
+  background: var(--bg-color);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: rgba(0, 0, 0, 0.02); }
+.tableRowClickable { cursor: pointer; }
+
+.emptyRow {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-muted);
+}
+
+.actionsCell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* --- Badges statut --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.badgeDraft { background: var(--bg-color); color: var(--text-muted); }
+.badgePartial { background: rgba(234, 179, 8, 0.12); color: #ca8a04; }
+.badgePaid { background: rgba(34, 197, 94, 0.12); color: #16a34a; }
+.badgeOverdue { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
+
+/* --- États --- */
+.loadingState {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-muted);
+}
+
+.errorBanner {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #dc2626;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.9rem;
+}
+
+/* --- Filtres (pilules) --- */
+.filters {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-xs);
+}
+
+.filterBtn {
+  white-space: nowrap;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-color-alt);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.filterBtn:hover { background: var(--bg-color); }
+
+.filterBtnActive {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: #FFF;
+}
+
+/* --- Modal (clients) --- */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 27, 45, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg-color-alt);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 32rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--bg-color-alt);
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+}
+
+.closeBtn:hover { color: var(--text-color); }
+
+.modalBody {
+  padding: var(--spacing-lg);
+}
+
+/* --- Invoice detail --- */
+.invoiceHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.invoiceNumber {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.invoiceMeta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: var(--spacing-xs);
+}
+
+.actionBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.totalsBox {
+  margin-left: auto;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.totalsRow {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-xs) 0;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.totalsRowFinal {
+  font-weight: 800;
+  font-size: 1.15rem;
+  border-top: 2px solid var(--border-color);
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-sm);
+}
+
+.totalsRowDue {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* --- Lignes d'articles (formulaire facture) --- */
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-md);
+}
+
+.itemsTable th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.itemsTable td {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  vertical-align: top;
+}
+
+.itemRemoveBtn {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  padding: var(--spacing-xs);
+}
+
+.addItemBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  width: 100%;
+  justify-content: center;
+}
+
+.addItemBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}

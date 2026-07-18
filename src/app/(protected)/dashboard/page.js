@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Feed } from '../../../components/feed/Feed';
+import { AdsSidebar } from '../../../components/feed/AdsSidebar';
 import { BackButton } from '../../../components/ui/BackButton';
 
 export default function Dashboard() {
@@ -28,7 +29,7 @@ export default function Dashboard() {
       </div>
       <h1 className="text-primary mb-lg">Tableau de bord</h1>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: 'var(--spacing-lg)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr 1fr', gap: 'var(--spacing-lg)' }}>
         {/* Sidebar */}
         <div className="glass p-md" style={{ borderRadius: 'var(--radius-md)', alignSelf: 'start' }}>
           <h3 className="mb-md">Bienvenue, {user.display_name}</h3>
@@ -49,11 +50,23 @@ export default function Dashboard() {
             <li className="hover-lift">
               <Link href="/tools" className="p-sm text-muted" style={{ display: 'block' }}>Outils pratiques</Link>
             </li>
+            <li className="hover-lift">
+              <Link href="/shalom-tv" className="p-sm text-muted" style={{ display: 'block' }}>Shalom TV</Link>
+            </li>
+            <li className="hover-lift">
+              <Link href="/ambassador" className="p-sm text-muted" style={{ display: 'block' }}>Programme Ambassadeur</Link>
+            </li>
+            <li className="hover-lift">
+              <Link href="/billing" className="p-sm text-muted" style={{ display: 'block' }}>Reçu+</Link>
+            </li>
           </ul>
         </div>
         
         {/* Fil d'actualité */}
         <Feed />
+
+        {/* Espace publicitaire */}
+        <AdsSidebar />
       </div>
     </div>
   );

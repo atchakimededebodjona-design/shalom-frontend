@@ -1,0 +1,225 @@
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-2xl);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.head h1 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin: 0 0 var(--spacing-lg);
+}
+
+/* --- Filtres --- */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip:hover { border-color: var(--primary); }
+
+.chipActive {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+}
+
+.spacer { flex: 1 1 auto; }
+
+.count {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* --- Liste --- */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  border-left-width: 4px;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  padding: var(--spacing-md);
+  transition: box-shadow 0.15s ease;
+}
+
+.card:hover { box-shadow: var(--shadow-sm); }
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.typeBadge { color: #fff; }
+
+.reasonBadge {
+  color: var(--text-color);
+  background: var(--bg-color-alt);
+  border: 1px solid var(--border-color);
+}
+
+.date {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.meta {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.targetId {
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.details {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--bg-color-alt);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+/* --- Actions --- */
+.actions {
+  margin-top: var(--spacing-md);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionsLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.actionBtn {
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-color);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionBtn:hover:not(:disabled) { border-color: var(--primary); }
+.actionBtn:disabled { cursor: not-allowed; opacity: 0.55; }
+
+.actionBtnDanger:hover:not(:disabled) { border-color: #dc2626; color: #dc2626; }
+
+/* --- Pagination --- */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+.pagerBtn {
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pagerBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.pagerInfo { color: var(--text-muted); font-size: 0.9rem; }
+
+/* --- États --- */
+.state {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--glass-bg);
+}
+
+.errorBox {
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.denied {
+  max-width: 520px;
+  margin: 12vh auto;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+.deniedIcon { color: var(--text-muted); margin-bottom: var(--spacing-md); }

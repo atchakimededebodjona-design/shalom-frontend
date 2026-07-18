@@ -7,6 +7,7 @@ import { postsService } from '../../services/posts.service';
 import { likesService } from '../../services/likes.service';
 import { getApiError } from '../../utils/apiError';
 import { timeAgo } from '../../utils/date';
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 import { Avatar } from '../ui/Avatar';
 import { FollowButton } from '../follows/FollowButton';
 import { CommentSection } from './CommentSection';
@@ -149,7 +150,7 @@ export const PostCard = ({ post, currentUser, onDeleted }) => {
       {/* Média */}
       {post.media_url && post.type === 'image' && (
         <img
-          src={post.media_url}
+          src={resolveMediaUrl(post.media_url)}
           alt=""
           style={{
             width: '100%',
@@ -161,7 +162,7 @@ export const PostCard = ({ post, currentUser, onDeleted }) => {
       )}
       {post.media_url && post.type === 'video' && (
         <video
-          src={post.media_url}
+          src={resolveMediaUrl(post.media_url)}
           controls
           style={{ width: '100%', marginTop: 'var(--spacing-md)', borderRadius: 'var(--radius-md)' }}
         />

@@ -21,6 +21,9 @@ const LIENS = [
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/tools', label: 'Outils' },
+  { href: '/shalom-tv', label: 'Shalom TV' },
+  { href: '/ambassador', label: 'Ambassadeur' },
+  { href: '/billing', label: 'Reçu+' },
   { href: '/profile', label: 'Profil' },
 ];
 
@@ -72,10 +75,10 @@ export const Navbar = () => {
                 ))}
                 {user.is_admin && (
                   <Link
-                    href="/camaj/admin"
+                    href="/admin"
                     className="nav-link flex items-center gap-xs"
                     style={{ fontWeight: 'bold', color: 'var(--primary)' }}
-                    title="Demandes CAMAJ"
+                    title="Espace administrateur"
                   >
                     <ShieldCheck size={16} /> Admin
                   </Link>
@@ -123,7 +126,7 @@ export const Navbar = () => {
             ))}
             {user.is_admin && (
               <Link
-                href="/camaj/admin"
+                href="/admin"
                 className={`${styles.mobileLink} ${styles.mobileLinkAdmin}`}
                 onClick={fermer}
               >

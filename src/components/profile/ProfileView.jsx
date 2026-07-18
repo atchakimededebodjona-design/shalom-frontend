@@ -5,6 +5,7 @@ import { BadgeCheck, Star, MapPin, Globe, Church, Camera, LoaderCircle } from 'l
 import { Avatar } from '../ui/Avatar';
 import { uploadService } from '../../services/upload.service';
 import { getApiError } from '../../utils/apiError';
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 
 const MAX_PHOTO_SIZE = 10 * 1024 * 1024; // 10 Mo
 
@@ -114,7 +115,7 @@ export const ProfileView = ({
             height: '140px',
             cursor: editable ? 'pointer' : 'default',
             background: profile.cover_url
-              ? `center / cover no-repeat url(${profile.cover_url})`
+              ? `center / cover no-repeat url(${resolveMediaUrl(profile.cover_url)})`
               : 'linear-gradient(120deg, var(--primary), var(--secondary))',
           }}
         />
