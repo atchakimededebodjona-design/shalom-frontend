@@ -39,27 +39,6 @@ export default function Dashboard() {
             <li className="hover-lift">
               <Link href="/camaj" className="p-sm text-muted" style={{ display: 'block' }}>Programme CAMAJ</Link>
             </li>
-            <li className="hover-lift">
-              <Link href="/community" className="p-sm text-muted" style={{ display: 'block' }}>Communauté</Link>
-            </li>
-            <li className="hover-lift">
-              <Link href="/spiritual" className="p-sm text-muted" style={{ display: 'block' }}>Outils Spirituels</Link>
-            </li>
-            <li className="hover-lift">
-              <Link href="/finance" className="p-sm text-muted" style={{ display: 'block' }}>Gestion Financière</Link>
-            </li>
-            <li className="hover-lift">
-              <Link href="/tools" className="p-sm text-muted" style={{ display: 'block' }}>Outils pratiques</Link>
-            </li>
-            <li className="hover-lift">
-              <Link href="/shalom-tv" className="p-sm text-muted" style={{ display: 'block' }}>Shalom TV</Link>
-            </li>
-            <li className="hover-lift">
-              <Link href="/ambassador" className="p-sm text-muted" style={{ display: 'block' }}>Programme Ambassadeur</Link>
-            </li>
-            <li className="hover-lift">
-              <Link href="/billing" className="p-sm text-muted" style={{ display: 'block' }}>Reçu+</Link>
-            </li>
           </ul>
         </div>
         

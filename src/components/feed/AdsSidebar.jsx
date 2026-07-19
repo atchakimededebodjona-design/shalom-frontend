@@ -37,7 +37,7 @@ export const AdsSidebar = () => {
             {card}
           </a>
         ) : (
-          <div key={ad.id}>{card}</div>
+          <div key={ad.id} className={styles.link}>{card}</div>
         );
       })}
     </aside>

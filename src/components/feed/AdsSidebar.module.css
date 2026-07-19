@@ -8,6 +8,7 @@
 }
 
 .link {
+  display: block;
   text-decoration: none;
   color: inherit;
 }
@@ -41,6 +42,12 @@
 
 @media (max-width: 1024px) {
   .sidebar {
-    display: none;
+    position: static;
+    align-items: center;
+  }
+
+  .link {
+    width: 100%;
+    max-width: 360px;
   }
 }
