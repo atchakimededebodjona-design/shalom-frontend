@@ -154,7 +154,7 @@ export default function InvoiceDetailPage() {
     );
   }
 
-  const remaining = invoice.total - invoice.amount_paid;
+  const remaining = invoice.total - (invoice.discount_amount || 0) - invoice.amount_paid;
 
   return (
     <div className={styles.containerWide}>
@@ -234,6 +234,9 @@ export default function InvoiceDetailPage() {
           <div className={styles.totalsRow}><span>Sous-total</span><span>{formatAmount(invoice.subtotal)}</span></div>
           <div className={styles.totalsRow}><span>TVA ({Number(invoice.tax_rate)}%)</span><span>{formatAmount(invoice.tax_amount)}</span></div>
           <div className={`${styles.totalsRow} ${styles.totalsRowFinal}`}><span>Total</span><span>{formatAmount(invoice.total)}</span></div>
+          {invoice.discount_amount > 0 && (
+            <div className={styles.totalsRow}><span>Remise</span><span>-{formatAmount(invoice.discount_amount)}</span></div>
+          )}
           <div className={styles.totalsRow}><span>Payé</span><span>{formatAmount(invoice.amount_paid)}</span></div>
           <div className={`${styles.totalsRow} ${styles.totalsRowDue}`}><span>Solde dû</span><span>{formatAmount(remaining)}</span></div>
         </div>

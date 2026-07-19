@@ -1,23 +1,28 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import billingService from '../../../services/billing.service';
 import { uploadService } from '../../../services/upload.service';
 import { resolveMediaUrl } from '../../../utils/resolveMediaUrl';
 import { getApiError } from '../../../utils/apiError';
-import { Users, FileText, Save, Camera, LoaderCircle } from 'lucide-react';
+import { InvoiceForm } from '../../../components/billing/InvoiceForm';
+import { Users, FileText, Save, Camera, LoaderCircle, Settings } from 'lucide-react';
 import styles from './billing.module.css';
 
 const MAX_LOGO_SIZE = 5 * 1024 * 1024; // 5 Mo
 
 export default function BillingHomePage() {
+  const router = useRouter();
   const [business, setBusiness] = useState(null);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [editingBusiness, setEditingBusiness] = useState(false);
   const logoInputRef = useRef(null);
   const [form, setForm] = useState({
     name: '', address: '', phone: '', tax_id: '', currency: 'XOF', invoice_prefix: 'FAC', logo_url: '',
@@ -26,6 +31,13 @@ export default function BillingHomePage() {
   useEffect(() => {
     fetchBusiness();
   }, []);
+
+  useEffect(() => {
+    if (!business) return;
+    billingService.listClients({ limit: 100 })
+      .then((res) => setClients(res.data.clients || []))
+      .catch(() => {});
+  }, [business]);
 
   const fetchBusiness = async () => {
     setLoading(true);
@@ -92,6 +104,7 @@ export default function BillingHomePage() {
       } else {
         const res = await billingService.updateMyBusiness(form);
         setBusiness(res.data.business);
+        setEditingBusiness(false);
       }
     } catch (err) {
       setError(getApiError(err, "Erreur lors de l'enregistrement."));
@@ -102,14 +115,14 @@ export default function BillingHomePage() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
+      <div className={styles.containerWide}>
         <div className={styles.loadingState}>Chargement…</div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.containerWide}>
       <div className={styles.headRow}>
         <h1 className={styles.title}>Reçu+</h1>
       </div>
@@ -132,10 +145,56 @@ export default function BillingHomePage() {
         </div>
       )}
 
+      {!notFound && business && !editingBusiness && (
+        <>
+          <div className={styles.card}>
+            <div className={styles.headRow}>
+              <h2 className={styles.sectionTitle}>Créer une facture</h2>
+              <button
+                type="button"
+                onClick={() => setEditingBusiness(true)}
+                className={styles.btnSecondary}
+              >
+                <Settings size={16} /> Modifier mon entreprise
+              </button>
+            </div>
+          </div>
+
+          <InvoiceForm
+            business={business}
+            clients={clients}
+            onCreated={(invoice) => router.push(`/billing/invoices/${invoice.id}`)}
+          />
+        </>
+      )}
+
+      {(notFound || editingBusiness) && (
       <div className={styles.card}>
-        <h2 className={styles.sectionTitle}>
-          {notFound ? 'Créer mon entreprise' : 'Mon entreprise'}
-        </h2>
+        <div className={styles.headRow}>
+          <h2 className={styles.sectionTitle}>
+            {notFound ? 'Créer mon entreprise' : 'Mon entreprise'}
+          </h2>
+          {editingBusiness && !notFound && (
+            <button
+              type="button"
+              onClick={() => {
+                setForm({
+                  name: business.name || '',
+                  address: business.address || '',
+                  phone: business.phone || '',
+                  tax_id: business.tax_id || '',
+                  currency: business.currency || 'XOF',
+                  invoice_prefix: business.invoice_prefix || 'FAC',
+                  logo_url: business.logo_url || '',
+                });
+                setEditingBusiness(false);
+              }}
+              className={styles.btnSecondary}
+            >
+              Annuler
+            </button>
+          )}
+        </div>
         {notFound && (
           <p className={styles.helperText} style={{ marginBottom: 'var(--spacing-md)' }}>
             Déclarez votre entreprise pour commencer à créer des clients et des factures.
@@ -209,6 +268,7 @@ export default function BillingHomePage() {
           </div>
         </form>
       </div>
+      )}
     </div>
   );
 }
