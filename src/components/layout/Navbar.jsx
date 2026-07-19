@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ShieldCheck, Menu, X } from 'lucide-react';
+import { Search, ShieldCheck, Menu, X, MessageCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { NotificationBell } from '../notifications/NotificationBell';
@@ -85,7 +85,16 @@ export const Navbar = () => {
                 )}
               </div>
 
-              {/* Cloche : visible dans les deux dispositions (rendue une seule fois) */}
+              {/* Messages + cloche : visibles dans les deux dispositions (rendus une seule fois) */}
+              <Link
+                href="/messages"
+                aria-label="Messages"
+                title="Messages"
+                className="hover-lift"
+                style={{ display: 'flex', color: 'var(--text-color)', padding: 'var(--spacing-xs)' }}
+              >
+                <MessageCircle size={22} />
+              </Link>
               <NotificationBell />
 
               {/* Déconnexion (bureau) */}
