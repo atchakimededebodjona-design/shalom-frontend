@@ -59,15 +59,6 @@ export const Navbar = () => {
             <div className={styles.right}>
               {/* Liens bureau */}
               <div className={styles.desktopLinks}>
-                <Link
-                  href="/search"
-                  aria-label="Rechercher des membres"
-                  title="Rechercher"
-                  className="flex items-center hover-lift"
-                  style={{ color: 'var(--text-color)' }}
-                >
-                  <Search size={20} />
-                </Link>
                 {LIENS.map(({ href, label }) => (
                   <Link key={href} href={href} className="nav-link" style={{ fontWeight: 'bold' }}>
                     {label}
@@ -85,7 +76,25 @@ export const Navbar = () => {
                 )}
               </div>
 
-              {/* Messages + cloche : visibles dans les deux dispositions (rendus une seule fois) */}
+              {/* Recherche + CAMAJ + Messages + cloche : visibles dans les deux dispositions (rendus une seule fois) */}
+              <Link
+                href="/search"
+                aria-label="Rechercher des membres"
+                title="Rechercher"
+                className="hover-lift"
+                style={{ display: 'flex', color: 'var(--text-color)', padding: 'var(--spacing-xs)' }}
+              >
+                <Search size={22} />
+              </Link>
+              <Link
+                href="/camaj"
+                aria-label="Programme CAMAJ"
+                title="Programme CAMAJ"
+                className="hover-lift"
+                style={{ display: 'flex', alignItems: 'center', padding: 'var(--spacing-xs)' }}
+              >
+                <img src="/icons/camaj-icon.png" alt="" width={22} height={22} style={{ display: 'block' }} />
+              </Link>
               <Link
                 href="/messages"
                 aria-label="Messages"
