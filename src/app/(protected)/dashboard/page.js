@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Feed } from '../../../components/feed/Feed';
 import { AdsSidebar } from '../../../components/feed/AdsSidebar';
 import { BackButton } from '../../../components/ui/BackButton';
+import styles from './dashboard.module.css';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -29,7 +30,7 @@ export default function Dashboard() {
       </div>
       <h1 className="text-primary mb-lg">Tableau de bord</h1>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr 1fr', gap: 'var(--spacing-lg)' }}>
+      <div className={styles.grid}>
         {/* Sidebar */}
         <div className="glass p-md" style={{ borderRadius: 'var(--radius-md)', alignSelf: 'start' }}>
           <h3 className="mb-md">Bienvenue, {user.display_name}</h3>
