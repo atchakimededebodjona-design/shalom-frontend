@@ -22,24 +22,30 @@ export const AdsSidebar = () => {
 
   if (ads.length === 0) return null;
 
+  // Liste dupliquée pour une boucle de défilement continue et sans coupure
+  // (translateX(-50%) retombe exactement sur le début de la seconde copie).
+  const items = [...ads, ...ads];
+
   return (
     <aside className={styles.sidebar}>
-      {ads.map((ad) => {
-        const card = (
-          <div className={styles.card}>
-            <img src={resolveMediaUrl(ad.image_url)} alt={ad.title} className={styles.image} />
-            <p className={styles.title}>{ad.title}</p>
-          </div>
-        );
+      <div className={styles.track} style={{ '--marquee-duration': `${Math.max(ads.length * 5, 15)}s` }}>
+        {items.map((ad, i) => {
+          const card = (
+            <div className={styles.card}>
+              <img src={resolveMediaUrl(ad.image_url)} alt={ad.title} className={styles.image} />
+              <p className={styles.title}>{ad.title}</p>
+            </div>
+          );
 
-        return ad.link_url ? (
-          <a key={ad.id} href={ad.link_url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-            {card}
-          </a>
-        ) : (
-          <div key={ad.id} className={styles.link}>{card}</div>
-        );
-      })}
+          return ad.link_url ? (
+            <a key={`${ad.id}-${i}`} href={ad.link_url} target="_blank" rel="noopener noreferrer" className={styles.link}>
+              {card}
+            </a>
+          ) : (
+            <div key={`${ad.id}-${i}`} className={styles.link}>{card}</div>
+          );
+        })}
+      </div>
     </aside>
   );
 };
