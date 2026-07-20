@@ -21,6 +21,7 @@ const LIENS = [
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/wallet', label: 'Portefeuille' },
+  { href: '/recu', label: 'Reçu+' },
   { href: '/tools', label: 'Outils' },
   { href: '/profile', label: 'Profil' },
 ];

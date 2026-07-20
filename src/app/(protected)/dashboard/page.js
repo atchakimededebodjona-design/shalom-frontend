@@ -50,6 +50,9 @@ export default function Dashboard() {
               <Link href="/wallet" className="p-sm text-muted" style={{ display: 'block' }}>Portefeuille</Link>
             </li>
             <li className="hover-lift">
+              <Link href="/recu" className="p-sm text-muted" style={{ display: 'block' }}>Reçu+ — Facturation</Link>
+            </li>
+            <li className="hover-lift">
               <Link href="/tools" className="p-sm text-muted" style={{ display: 'block' }}>Outils pratiques</Link>
             </li>
           </ul>
