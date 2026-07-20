@@ -47,6 +47,9 @@ export default function Dashboard() {
               <Link href="/finance" className="p-sm text-muted" style={{ display: 'block' }}>Gestion Financière</Link>
             </li>
             <li className="hover-lift">
+              <Link href="/wallet" className="p-sm text-muted" style={{ display: 'block' }}>Portefeuille</Link>
+            </li>
+            <li className="hover-lift">
               <Link href="/tools" className="p-sm text-muted" style={{ display: 'block' }}>Outils pratiques</Link>
             </li>
           </ul>

@@ -20,6 +20,7 @@ const LIENS = [
   { href: '/community', label: 'Communauté' },
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
+  { href: '/wallet', label: 'Portefeuille' },
   { href: '/tools', label: 'Outils' },
   { href: '/profile', label: 'Profil' },
 ];
