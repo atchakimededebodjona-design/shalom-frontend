@@ -32,7 +32,7 @@ export default function Dashboard() {
       
       <div className={styles.grid}>
         {/* Sidebar */}
-        <div className="glass p-md" style={{ borderRadius: 'var(--radius-md)', alignSelf: 'start' }}>
+        <div className={`glass p-md ${styles.sidebarCol}`} style={{ borderRadius: 'var(--radius-md)', alignSelf: 'start' }}>
           <h3 className="mb-md">Bienvenue, {user.display_name}</h3>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <li className="p-sm" style={{ backgroundColor: 'var(--bg-color-alt)', borderRadius: 'var(--radius-sm)' }}>Fil d'actualité</li>
@@ -41,12 +41,16 @@ export default function Dashboard() {
             </li>
           </ul>
         </div>
-        
-        {/* Fil d'actualité */}
-        <Feed />
 
-        {/* Espace publicitaire */}
-        <AdsSidebar />
+        {/* Espace publicitaire (avant le fil en mobile, colonne de droite en bureau) */}
+        <div className={styles.adsCol}>
+          <AdsSidebar />
+        </div>
+
+        {/* Fil d'actualité */}
+        <div className={styles.feedCol}>
+          <Feed />
+        </div>
       </div>
     </div>
   );
