@@ -61,7 +61,7 @@ export default function AdminHubPage() {
           <span className={styles.cardDesc}>Ajouter et gérer les vidéos, podcasts, articles et photos.</span>
         </Link>
 
-        <Link href="/admin/ads" className={styles.card}>
+        <Link href="/admin/publicites" className={styles.card}>
           <Megaphone size={24} className={styles.cardIcon} />
           <span className={styles.cardTitle}>Publicités</span>
           <span className={styles.cardDesc}>Gérer l&apos;espace publicitaire affiché sur le fil d&apos;actualité.</span>
