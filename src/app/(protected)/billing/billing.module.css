@@ -533,3 +533,57 @@
   border-color: var(--primary);
   color: var(--primary);
 }
+
+/* Conteneur scrollable pour le tableau d'articles : évite le débordement sur
+   petit écran (les lignes gardent leur mise en page, on scrolle horizontalement). */
+.itemsScroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: var(--spacing-md);
+}
+.itemsScroll .itemsTable {
+  min-width: 520px;
+  margin-bottom: 0;
+}
+
+/* --- Affichage mobile (SaaS Reçu+) --- */
+@media (max-width: 768px) {
+  .container,
+  .containerWide {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  .title { font-size: 1.4rem; }
+
+  .card { padding: var(--spacing-lg); }
+
+  /* En-tête entreprise : le bloc texte passe sous le logo si nécessaire. */
+  .letterhead {
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+  .letterheadLogo { width: 48px; height: 48px; }
+
+  /* Tableaux de données : cellules plus compactes (le conteneur scrolle déjà). */
+  .table th,
+  .table td { padding: var(--spacing-sm) var(--spacing-md); }
+
+  /* Boutons de formulaire pleine largeur, empilés (action principale en haut). */
+  .formActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .formActions > * {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Barre d'actions de la facture (Imprimer / WhatsApp / Supprimer). */
+  .actionBar { width: 100%; }
+  .actionBar > * { flex: 1 1 auto; justify-content: center; }
+
+  /* Totaux en pleine largeur. */
+  .totalsBox { max-width: none; }
+}

@@ -34,7 +34,6 @@ export default function InvoiceDetailPage() {
   const [invoice, setInvoice] = useState(null);
   const [payments, setPayments] = useState([]);
   const [business, setBusiness] = useState(null);
-  const [clientName, setClientName] = useState('');
   const [currency, setCurrency] = useState('XOF');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,15 +57,7 @@ export default function InvoiceDetailPage() {
       setInvoice(invoiceRes.data.invoice);
       setPayments(paymentsRes.data.payments || []);
       setBusiness(businessRes.data.business);
-      setCurrency(businessRes.data.business.currency || 'XOF');
-
-      try {
-        const clientsRes = await billingService.listClients({ limit: 100 });
-        const client = clientsRes.data.clients.find((c) => c.id === invoiceRes.data.invoice.client_id);
-        setClientName(client?.name || '');
-      } catch {
-        // non bloquant
-      }
+      setCurrency(businessRes.data.business.currency || invoiceRes.data.invoice.currency || 'XOF');
     } catch (err) {
       setError(getApiError(err, 'Erreur lors du chargement de la facture.'));
     } finally {
@@ -177,7 +168,7 @@ export default function InvoiceDetailPage() {
         <div>
           <div className={styles.invoiceNumber}>{invoice.invoice_number}</div>
           <div className={styles.invoiceMeta}>
-            {clientName && <>Client : <strong>{clientName}</strong> · </>}
+            {invoice.client_name && <>Client : <strong>{invoice.client_name}</strong> · </>}
             Émise le {new Date(invoice.issue_date).toLocaleDateString('fr-FR')}
             {invoice.due_date && ` · Échéance le ${new Date(invoice.due_date).toLocaleDateString('fr-FR')}`}
           </div>
@@ -202,7 +193,7 @@ export default function InvoiceDetailPage() {
 
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>Articles</h2>
-        <table className={styles.itemsTable}>
+        <div className={styles.itemsScroll}><table className={styles.itemsTable}>
           <thead>
             <tr>
               <th style={{ width: '50%' }}>Description</th>
@@ -221,7 +212,7 @@ export default function InvoiceDetailPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
 
         <div className={styles.totalsBox} style={{ marginTop: 'var(--spacing-xl)' }}>
           <div className={styles.totalsRow}><span>Sous-total</span><span>{formatAmount(invoice.subtotal)}</span></div>

@@ -79,7 +79,7 @@ export function InvoiceForm({ business, clients, onCreated, onCancel }) {
 
           <div className={styles.card}>
             <h2 className={styles.sectionTitle}>Articles</h2>
-            <table className={styles.itemsTable}>
+            <div className={styles.itemsScroll}><table className={styles.itemsTable}>
               <thead>
                 <tr>
                   <th style={{ width: '45%' }}>Description</th>
@@ -133,7 +133,7 @@ export function InvoiceForm({ business, clients, onCreated, onCancel }) {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
             <button type="button" onClick={f.addItem} className={styles.addItemBtn}>
               <Plus size={16} /> Ajouter un article
             </button>

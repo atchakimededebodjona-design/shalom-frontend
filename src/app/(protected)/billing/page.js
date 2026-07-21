@@ -30,6 +30,8 @@ export default function BillingHomePage() {
 
   useEffect(() => {
     fetchBusiness();
+    // Pré-compile la page de détail (en dev, évite un long gel après « Créer la facture »).
+    router.prefetch?.('/billing/invoices/apercu');
   }, []);
 
   useEffect(() => {

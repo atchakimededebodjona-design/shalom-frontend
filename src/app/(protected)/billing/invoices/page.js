@@ -23,8 +23,6 @@ const formatAmount = (amount, currency) => `${Number(amount).toLocaleString('fr-
 export default function BillingInvoicesPage() {
   const router = useRouter();
   const [invoices, setInvoices] = useState([]);
-  const [clientsById, setClientsById] = useState({});
-  const [currency, setCurrency] = useState('XOF');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
@@ -32,25 +30,6 @@ export default function BillingInvoicesPage() {
   useEffect(() => {
     fetchInvoices();
   }, [status]);
-
-  useEffect(() => {
-    // Récupère les clients + la devise de l'entreprise une seule fois, pour
-    // afficher le nom du client (l'API facture ne renvoie que client_id).
-    (async () => {
-      try {
-        const [clientsRes, businessRes] = await Promise.all([
-          billingService.listClients({ limit: 100 }),
-          billingService.getMyBusiness(),
-        ]);
-        const map = {};
-        for (const c of clientsRes.data.clients) map[c.id] = c.name;
-        setClientsById(map);
-        setCurrency(businessRes.data.business.currency || 'XOF');
-      } catch {
-        // silencieux — le nom du client repliera sur son id, non bloquant
-      }
-    })();
-  }, []);
 
   const fetchInvoices = async () => {
     setLoading(true);
@@ -117,14 +96,14 @@ export default function BillingInvoicesPage() {
                   onClick={() => router.push(`/billing/invoices/${inv.id}`)}
                 >
                   <td>{inv.invoice_number}</td>
-                  <td>{clientsById[inv.client_id] || '—'}</td>
+                  <td>{inv.client_name || '—'}</td>
                   <td>
                     <span className={`${styles.badge} ${STATUS_BADGE[inv.status] || styles.badgeDraft}`}>
                       {STATUS_LABELS[inv.status] || inv.status}
                     </span>
                   </td>
-                  <td>{formatAmount(inv.total, currency)}</td>
-                  <td>{formatAmount(inv.amount_paid, currency)}</td>
+                  <td>{formatAmount(inv.total, inv.currency)}</td>
+                  <td>{formatAmount(inv.amount_paid, inv.currency)}</td>
                   <td>{inv.due_date ? new Date(inv.due_date).toLocaleDateString('fr-FR') : '—'}</td>
                 </tr>
               ))}
