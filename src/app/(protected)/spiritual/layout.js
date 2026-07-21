@@ -11,6 +11,7 @@ import styles from '../../../components/shared/panel.module.css';
 const TABS = [
   { href: '/spiritual', label: "Aujourd'hui" },
   { href: '/spiritual/plans', label: 'Lecture' },
+  { href: '/spiritual/bible', label: 'La Bible' },
   { href: '/spiritual/prayers', label: 'Prière' },
   { href: '/spiritual/journal', label: 'Journal' },
   { href: '/spiritual/worship', label: 'Louange' },

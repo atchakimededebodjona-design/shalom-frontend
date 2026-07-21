@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { Plus, Flame, Check, BookOpen } from 'lucide-react';
 import { spiritualService } from '../../../../services/spiritual.service';
 import { Button } from '../../../../components/ui/Button';
@@ -168,6 +169,24 @@ export default function PlansPage() {
                       <div className={`${styles.progressFill} ${done ? styles.progressFillDone : ''}`} style={{ width: `${pct}%` }} />
                     </div>
                   </>
+                )}
+
+                {p.current_day_passages && (
+                  <div className="text-sm" style={{ marginTop: 'var(--spacing-xs)' }}>
+                    <span className="text-muted">Aujourd&apos;hui : </span>
+                    <strong>{p.current_day_passages}</strong>
+                    {p.current_day_start_book_id && (
+                      <>
+                        {' '}
+                        <Link
+                          href={`/spiritual/bible/${p.current_day_start_book_id}/${p.current_day_start_chapter}`}
+                          className="text-primary font-bold"
+                        >
+                          Lire
+                        </Link>
+                      </>
+                    )}
+                  </div>
                 )}
 
                 <div className={styles.actions} style={{ marginTop: 'var(--spacing-md)' }}>

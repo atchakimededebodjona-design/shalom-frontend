@@ -100,6 +100,23 @@ export default function SpiritualTodayPage() {
                       <div className={styles.progressFill} style={{ width: `${pct}%` }} />
                     </div>
                     <div className="text-sm text-muted">Jour {p.current_day} / {p.total_days}</div>
+                    {p.current_day_passages && (
+                      <div className="text-sm" style={{ marginTop: 'var(--spacing-xs)' }}>
+                        <span className="text-muted">À lire : </span>
+                        <strong>{p.current_day_passages}</strong>
+                        {p.current_day_start_book_id && (
+                          <>
+                            {' '}
+                            <Link
+                              href={`/spiritual/bible/${p.current_day_start_book_id}/${p.current_day_start_chapter}`}
+                              className="text-primary font-bold"
+                            >
+                              Lire
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}

@@ -78,9 +78,18 @@ export default function Profile() {
         editable
         onPhotoChange={handlePhotoChange}
         action={
-          <Button variant="secondary" onClick={() => setModal('edit')}>
-            Modifier le profil
-          </Button>
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Button variant="secondary" onClick={() => setModal('edit')}>
+              Modifier le profil
+            </Button>
+            <Button 
+              variant={user.is_ambassador ? 'primary' : 'secondary'} 
+              onClick={() => router.push('/ambassador')}
+              style={user.is_ambassador ? {} : { background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)' }}
+            >
+              {user.is_ambassador ? 'Espace Ambassadeur' : 'Devenir Ambassadeur'}
+            </Button>
+          </div>
         }
       />
 

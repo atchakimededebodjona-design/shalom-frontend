@@ -1,11 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 // Modale générique : overlay sombre + panneau "glass" centré.
 // Ferme sur clic overlay, bouton ✕, ou touche Échap.
+//
+// Rendue via un portail dans document.body : les pages utilisent la classe
+// `animate-fade-in` (transform: translateY(...) pendant l'animation), et tout
+// élément avec un `transform` non-`none` devient un bloc englobant pour ses
+// descendants en `position: fixed` — sans portail, l'overlay ne se fixe plus
+// au vrai viewport mais au conteneur de page, et déborde/scrolle avec elle.
 export const Modal = ({ isOpen, onClose, title, children, maxWidth = '480px' }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return undefined;
     const onKey = (e) => {
@@ -21,9 +34,9 @@ export const Modal = ({ isOpen, onClose, title, children, maxWidth = '480px' }) 
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       onClick={onClose}
       style={{
@@ -68,8 +81,9 @@ export const Modal = ({ isOpen, onClose, title, children, maxWidth = '480px' }) 
             <X size={20} />
           </button>
         </div>
-        <div style={{ overflowY: 'auto', padding: 'var(--spacing-md)' }}>{children}</div>
+        <div style={{ overflowY: 'auto', padding: 'var(--spacing-md)', flex: 1, minHeight: 0 }}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

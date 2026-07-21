@@ -1,0 +1,24 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+/* Position fixe en bureau (menu | fil | pubs), indépendante de l'ordre DOM
+   utilisé pour l'empilement mobile (menu, pubs, puis fil). grid-row: 1 sur
+   les trois forcé explicitement, sinon l'ordre DOM (menu, pubs, fil) fait
+   dériver le placement automatique du fil sur une deuxième ligne. */
+.sidebarCol { grid-column: 1; grid-row: 1; }
+.feedCol { grid-column: 2; grid-row: 1; }
+.adsCol { grid-column: 3; grid-row: 1; }
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebarCol, .feedCol, .adsCol {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}

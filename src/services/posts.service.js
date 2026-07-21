@@ -4,10 +4,12 @@ import api from './api';
 export const POST_TYPES = ['texte', 'image', 'video', 'temoignage', 'priere', 'annonce'];
 
 export const postsService = {
-  // GET /posts — fil d'actualité paginé
+  // GET /posts — fil d'actualité paginé (ou fil d'un groupe si groupId fourni)
   // Réponse : { success, data: { posts, pagination } }
-  getFeed: async ({ page = 1, limit = 20 } = {}) => {
-    const response = await api.get('/posts', { params: { page, limit } });
+  getFeed: async ({ page = 1, limit = 20, groupId } = {}) => {
+    const params = { page, limit };
+    if (groupId) params.group_id = groupId;
+    const response = await api.get('/posts', { params });
     return response.data;
   },
 

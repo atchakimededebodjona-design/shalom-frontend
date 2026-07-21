@@ -11,6 +11,7 @@ import { GroupEditForm } from '../../../../components/groups/GroupEditForm';
 import { Modal } from '../../../../components/ui/Modal';
 import { Button } from '../../../../components/ui/Button';
 import { BackButton } from '../../../../components/ui/BackButton';
+import { Feed } from '../../../../components/feed/Feed';
 
 export default function GroupDetailPage() {
   const { id } = useParams();
@@ -195,6 +196,26 @@ export default function GroupDetailPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Publications du groupe */}
+      <div className="mb-lg">
+        <h2 className="mb-md" style={{ fontSize: '1.2rem' }}>Publications</h2>
+        {isMember ? (
+          <Feed
+            groupId={id}
+            emptyMessage="Aucune publication dans ce groupe pour l'instant. Soyez le premier à partager un message, une image ou une vidéo !"
+          />
+        ) : (
+          <Feed
+            groupId={id}
+            showComposer={false}
+            emptyMessage="Aucune publication dans ce groupe pour l'instant."
+          />
+        )}
+        {!isMember && (
+          <p className="text-muted text-sm mt-sm">Rejoignez le groupe pour pouvoir publier.</p>
+        )}
       </div>
 
       {/* Membres */}

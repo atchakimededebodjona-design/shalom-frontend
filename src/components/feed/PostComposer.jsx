@@ -22,7 +22,7 @@ const MAX_LENGTH = 5000;
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 Mo
 const needsMedia = (type) => type === 'image' || type === 'video';
 
-export const PostComposer = ({ onCreated }) => {
+export const PostComposer = ({ onCreated, groupId }) => {
   const { user } = useAuth();
   const fileInputRef = useRef(null);
 
@@ -83,6 +83,7 @@ export const PostComposer = ({ onCreated }) => {
     try {
       const payload = { content: content.trim(), type };
       if (needsMedia(type) && mediaUrl) payload.media_url = mediaUrl;
+      if (groupId) payload.group_id = groupId;
       const res = await postsService.createPost(payload);
       onCreated?.(res.data.post);
       // Réinitialiser
@@ -107,7 +108,7 @@ export const PostComposer = ({ onCreated }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             maxLength={MAX_LENGTH}
-            placeholder="Que souhaitez-vous partager avec la communauté ?"
+            placeholder={groupId ? 'Partager un message avec le groupe…' : 'Que souhaitez-vous partager avec la communauté ?'}
             style={{ width: '100%', minHeight: '90px', resize: 'vertical' }}
           />
 

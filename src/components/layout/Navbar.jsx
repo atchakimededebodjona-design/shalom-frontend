@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ShieldCheck, Menu, X } from 'lucide-react';
+import { Search, ShieldCheck, Menu, X, MessageCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { NotificationBell } from '../notifications/NotificationBell';
@@ -23,6 +23,9 @@ const LIENS = [
   { href: '/wallet', label: 'Portefeuille' },
   { href: '/recu', label: 'Reçu+' },
   { href: '/tools', label: 'Outils' },
+  { href: '/shalom-tv', label: 'Shalom TV' },
+  { href: '/ambassador', label: 'Ambassadeur' },
+  { href: '/billing', label: 'Reçu+' },
   { href: '/profile', label: 'Profil' },
 ];
 
@@ -58,15 +61,6 @@ export const Navbar = () => {
             <div className={styles.right}>
               {/* Liens bureau */}
               <div className={styles.desktopLinks}>
-                <Link
-                  href="/search"
-                  aria-label="Rechercher des membres"
-                  title="Rechercher"
-                  className="flex items-center hover-lift"
-                  style={{ color: 'var(--text-color)' }}
-                >
-                  <Search size={20} />
-                </Link>
                 {LIENS.map(({ href, label }) => (
                   <Link key={href} href={href} className="nav-link" style={{ fontWeight: 'bold' }}>
                     {label}
@@ -74,17 +68,44 @@ export const Navbar = () => {
                 ))}
                 {user.is_admin && (
                   <Link
-                    href="/camaj/admin"
+                    href="/admin"
                     className="nav-link flex items-center gap-xs"
                     style={{ fontWeight: 'bold', color: 'var(--primary)' }}
-                    title="Demandes CAMAJ"
+                    title="Espace administrateur"
                   >
                     <ShieldCheck size={16} /> Admin
                   </Link>
                 )}
               </div>
 
-              {/* Cloche : visible dans les deux dispositions (rendue une seule fois) */}
+              {/* Recherche + CAMAJ + Messages + cloche : visibles dans les deux dispositions (rendus une seule fois) */}
+              <Link
+                href="/search"
+                aria-label="Rechercher des membres"
+                title="Rechercher"
+                className="hover-lift"
+                style={{ display: 'flex', color: 'var(--text-color)', padding: 'var(--spacing-xs)' }}
+              >
+                <Search size={22} />
+              </Link>
+              <Link
+                href="/camaj"
+                aria-label="Programme CAMAJ"
+                title="Programme CAMAJ"
+                className="hover-lift"
+                style={{ display: 'flex', alignItems: 'center', padding: 'var(--spacing-xs)' }}
+              >
+                <img src="/icons/camaj-icon.png" alt="" width={22} height={22} style={{ display: 'block' }} />
+              </Link>
+              <Link
+                href="/messages"
+                aria-label="Messages"
+                title="Messages"
+                className="hover-lift"
+                style={{ display: 'flex', color: 'var(--text-color)', padding: 'var(--spacing-xs)' }}
+              >
+                <MessageCircle size={22} />
+              </Link>
               <NotificationBell />
 
               {/* Déconnexion (bureau) */}
@@ -125,7 +146,7 @@ export const Navbar = () => {
             ))}
             {user.is_admin && (
               <Link
-                href="/camaj/admin"
+                href="/admin"
                 className={`${styles.mobileLink} ${styles.mobileLinkAdmin}`}
                 onClick={fermer}
               >

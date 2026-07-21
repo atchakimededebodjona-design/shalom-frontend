@@ -1,5 +1,7 @@
 'use client';
 
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
+
 // Avatar utilisateur : affiche l'image si disponible, sinon les initiales sur fond coloré.
 // On utilise <img> plutôt que next/image car les URLs viennent de profils
 // utilisateurs arbitraires (pas de remotePatterns à configurer).
@@ -21,7 +23,7 @@ export const Avatar = ({ src, name = '', size = 44 }) => {
   };
 
   if (src) {
-    return <img src={src} alt={name} style={baseStyle} />;
+    return <img src={resolveMediaUrl(src)} alt={name} style={baseStyle} />;
   }
 
   return (

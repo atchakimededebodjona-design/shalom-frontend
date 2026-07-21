@@ -9,7 +9,7 @@ import { PostCard } from './PostCard';
 
 const PAGE_SIZE = 10;
 
-export const Feed = () => {
+export const Feed = ({ groupId, showComposer = true, emptyMessage }) => {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [pagination, setPagination] = useState(null);
@@ -18,9 +18,9 @@ export const Feed = () => {
   const [error, setError] = useState('');
 
   const fetchPage = useCallback(async (page) => {
-    const res = await postsService.getFeed({ page, limit: PAGE_SIZE });
+    const res = await postsService.getFeed({ page, limit: PAGE_SIZE, groupId });
     return res.data; // { posts, pagination }
-  }, []);
+  }, [groupId]);
 
   // Chargement initial
   useEffect(() => {
@@ -85,7 +85,7 @@ export const Feed = () => {
 
   return (
     <div className="flex-col gap-md">
-      <PostComposer onCreated={handleCreated} />
+      {showComposer && <PostComposer onCreated={handleCreated} groupId={groupId} />}
 
       {loading ? (
         <div className="glass p-lg text-center text-muted animate-pulse" style={{ borderRadius: 'var(--radius-md)' }}>
@@ -98,7 +98,7 @@ export const Feed = () => {
       ) : posts.length === 0 ? (
         <div className="glass p-lg" style={{ borderRadius: 'var(--radius-md)' }}>
           <p className="text-muted text-center py-md">
-            Le fil d'actualité est vide. Soyez le premier à publier !
+            {emptyMessage || "Le fil d'actualité est vide. Soyez le premier à publier !"}
           </p>
         </div>
       ) : (
