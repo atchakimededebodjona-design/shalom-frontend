@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ShieldCheck, Menu, X, MessageCircle } from 'lucide-react';
+import { Search, ShieldCheck, Menu, X, MessageSquare } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { NotificationBell } from '../notifications/NotificationBell';
+import { AuthLogo } from './AuthLogo';
 import styles from './Navbar.module.css';
 
 // Pages sans chrome (plein écran)
@@ -55,7 +56,9 @@ export const Navbar = () => {
     <nav className={`glass ${styles.bar}`}>
       <div className="container">
         <div className={styles.inner}>
-          <Link href="/" className={styles.brand} onClick={fermer}>SHALOM</Link>
+          <Link href="/" className={styles.brand} onClick={fermer} aria-label="Accueil SHALOM">
+            <AuthLogo className={styles.brandLogo} alt="SHALOM" fallbackSize="1.5rem" />
+          </Link>
 
           {user ? (
             <div className={styles.right}>
@@ -78,35 +81,19 @@ export const Navbar = () => {
                 )}
               </div>
 
-              {/* Recherche + CAMAJ + Messages + cloche : visibles dans les deux dispositions (rendus une seule fois) */}
-              <Link
-                href="/search"
-                aria-label="Rechercher des membres"
-                title="Rechercher"
-                className="hover-lift"
-                style={{ display: 'flex', color: 'var(--text-color)', padding: 'var(--spacing-xs)' }}
-              >
-                <Search size={22} />
-              </Link>
-              <Link
-                href="/camaj"
-                aria-label="Programme CAMAJ"
-                title="Programme CAMAJ"
-                className="hover-lift"
-                style={{ display: 'flex', alignItems: 'center', padding: 'var(--spacing-xs)' }}
-              >
-                <img src="/icons/camaj-icon.png" alt="" width={22} height={22} style={{ display: 'block' }} />
-              </Link>
-              <Link
-                href="/messages"
-                aria-label="Messages"
-                title="Messages"
-                className="hover-lift"
-                style={{ display: 'flex', color: 'var(--text-color)', padding: 'var(--spacing-xs)' }}
-              >
-                <MessageCircle size={22} />
-              </Link>
-              <NotificationBell />
+              {/* Icônes d'accès rapide + cloche : visibles dans les deux dispositions */}
+              <div className={styles.icons}>
+                <Link href="/messages" aria-label="Messages" title="Messages" className={styles.iconLink}>
+                  <MessageSquare size={20} />
+                </Link>
+                <Link href="/search" aria-label="Rechercher des membres" title="Rechercher des membres" className={styles.iconLink}>
+                  <Search size={20} />
+                </Link>
+                <Link href="/camaj" aria-label="Programme CAMAJ" title="Programme CAMAJ" className={styles.iconLink}>
+                  <img src="/camaj-logo.png" alt="CAMAJ" className={styles.camajLogo} />
+                </Link>
+                <NotificationBell />
+              </div>
 
               {/* Déconnexion (bureau) */}
               <span className={styles.desktopOnly}>

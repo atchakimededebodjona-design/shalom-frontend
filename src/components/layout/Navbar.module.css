@@ -13,12 +13,25 @@
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-brand);
   font-size: 1.6rem;
   font-weight: bold;
   letter-spacing: 0.06em;
   color: var(--primary);
   white-space: nowrap;
+}
+
+/* Logo SHALOM à la place du mot-symbole texte (mobile + desktop) */
+.brandLogo {
+  display: block;
+  height: 44px;
+  width: auto;
+  border-radius: var(--radius-sm);
+}
+@media (max-width: 768px) {
+  .brandLogo { height: 36px; }
 }
 
 .right {
@@ -37,6 +50,37 @@
 .desktopOnly {
   display: flex;
   align-items: center;
+}
+
+/* Groupe d'icônes d'accès rapide (Messages, Recherche, CAMAJ) + cloche */
+.icons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+.iconLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.iconLink:hover {
+  background: var(--glass-bg);
+  transform: translateY(-1px);
+}
+/* Logo CAMAJ en badge circulaire (le PNG a un fond blanc → on masque les coins
+   pour un rendu propre en thème clair ET sombre) */
+.camajLogo {
+  height: 26px;
+  width: 26px;
+  object-fit: cover;
+  border-radius: var(--radius-full);
+  background: #fff;
+  display: block;
+  box-shadow: 0 0 0 1px var(--border-color);
 }
 
 /* Bouton hamburger (mobile uniquement) */

@@ -1,0 +1,127 @@
+/* Espace publicitaire — bandeau d'images défilant droite → gauche.
+   S'appuie sur les variables globales du thème SHALOM (clair + sombre). */
+
+.banner {
+  position: relative;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-color-alt);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  min-height: 56px;
+}
+
+/* Étiquette « Publicité » (coin haut-gauche) */
+.label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: var(--bg-color-alt);
+  padding: 3px 8px;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+/* Lien admin « Gérer » (coin haut-droit) */
+.manageLink {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--bg-color-alt);
+  padding: 3px 8px;
+  border-left: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-bottom-left-radius: var(--radius-sm);
+}
+.manageLink:hover { color: var(--primary-hover); }
+
+/* État vide (admin uniquement) */
+.emptyAdmin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-lg) var(--spacing-md);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.emptyAdmin:hover { color: var(--primary); }
+
+/* Fenêtre défilante : bords fondus en dégradé */
+.viewport {
+  overflow: hidden;
+  padding: var(--spacing-sm) 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+/* Piste : dupliquée dans le JSX → translation -50% = boucle continue.
+   L'espacement est porté par margin-right (pas flex-gap) pour que les deux
+   moitiés fassent exactement la même largeur. */
+.track {
+  display: flex;
+  width: max-content;
+  animation: scroll-rtl 40s linear infinite;
+}
+.viewport:hover .track { animation-play-state: paused; }
+
+@keyframes scroll-rtl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Une tuile image */
+.ad {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-md);
+  height: 64px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+.adImg {
+  height: 64px;
+  width: auto;
+  max-width: 340px;
+  object-fit: contain;
+  display: block;
+}
+/* Repli texte si l'image est cassée */
+.adFallback {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 var(--spacing-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+/* Accessibilité : on respecte « animations réduites » */
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; }
+  .viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+}

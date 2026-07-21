@@ -1,36 +1,12 @@
 import api from './api';
-import { resolveMediaUrl } from '../utils/resolveMediaUrl';
 
-const ADS_API_URL = '/ads';
-
-export { resolveMediaUrl };
-
-const adsService = {
-  // === Public / Utilisateurs connectés ===
-  getAds: (params) => {
-    return api.get(ADS_API_URL, { params });
-  },
-
-  // === Admin ===
-  createAd: (formData) => {
-    return api.post(ADS_API_URL, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-  },
-
-  updateAd: (id, formData) => {
-    return api.put(`${ADS_API_URL}/${id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-  },
-
-  deleteAd: (id) => {
-    return api.delete(`${ADS_API_URL}/${id}`);
-  },
+// Module Publicit├®s (espace publicitaire du tableau de bord).
+// Lecture des annonces actives ouverte ├á tout utilisateur connect├® ; la gestion
+// (listAll / create / update / remove) est r├®serv├®e aux administrateurs c├┤t├® API.
+export const adsService = {
+  list: async () => (await api.get('/ads')).data,            // annonces actives (bandeau)
+  listAll: async () => (await api.get('/ads/manage')).data,  // toutes (admin)
+  create: async (body) => (await api.post('/ads', body)).data,
+  update: async (id, body) => (await api.patch(`/ads/${id}`, body)).data,
+  remove: async (id) => (await api.delete(`/ads/${id}`)).data,
 };
-
-export default adsService;

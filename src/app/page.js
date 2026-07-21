@@ -1,6 +1,5 @@
-import Link from 'next/link';
-import { Button } from '../components/ui/Button';
 import { AuthLogo } from '../components/layout/AuthLogo';
+import { HomeCta } from '../components/layout/HomeCta';
 
 export default function Home() {
   return (
@@ -13,14 +12,7 @@ export default function Home() {
         <p className="text-lg text-muted" style={{ maxWidth: '600px', margin: '0 auto', marginBottom: 'var(--spacing-xl)' }}>
           Connecte, Inspire, Transforme. La plateforme chrétienne francophone pour la jeunesse d'Afrique.
         </p>
-        <div className="flex gap-md justify-center mt-lg">
-          <Link href="/register">
-            <Button variant="primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>S'inscrire</Button>
-          </Link>
-          <Link href="/login">
-            <Button variant="primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>Se connecter</Button>
-          </Link>
-        </div>
+        <HomeCta />
       </section>
 
       {/* Features Section */}
