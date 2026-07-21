@@ -17,14 +17,12 @@ const BARE_ROUTES = ['/login', '/register'];
 const LIENS = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/groups', label: 'Groupes' },
-  { href: '/messages', label: 'Messages' },
   { href: '/community', label: 'Communauté' },
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/wallet', label: 'Portefeuille' },
   { href: '/tools', label: 'Outils' },
   { href: '/shalom-tv', label: 'Shalom TV' },
-  { href: '/ambassador', label: 'Ambassadeur' },
   { href: '/billing', label: 'Reçu+' },
   { href: '/profile', label: 'Profil' },
 ];
