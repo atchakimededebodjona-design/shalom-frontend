@@ -39,9 +39,22 @@ export default function Dashboard() {
         {/* Sidebar — le reste de la navigation est déjà dans le menu du haut */}
         <aside className={`glass ${styles.sidebar}`}>
           <h3 className={styles.welcome}>Bienvenue, {user.display_name}</h3>
-          <nav className={styles.nav}>
+          <nav className={styles.nav} style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <span className={`${styles.navItem} ${styles.navItemActive}`}>Fil d'actualité</span>
-            <Link href="/camaj" className={styles.navItem}>Programme CAMAJ</Link>
+            <Link
+              href="/camaj"
+              className={styles.camajLink}
+              title="Programme CAMAJ"
+              aria-label="Programme CAMAJ"
+              style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', lineHeight: 0 }}
+            >
+              <img
+                src="/camaj-logo.png"
+                alt="CAMAJ"
+                className={styles.camajLogo}
+                style={{ height: '1.9rem', width: 'auto', display: 'block' }}
+              />
+            </Link>
           </nav>
         </aside>
 

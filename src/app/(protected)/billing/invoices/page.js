@@ -8,11 +8,15 @@ import { getApiError } from '../../../../utils/apiError';
 import { ArrowLeft, Plus } from 'lucide-react';
 import styles from '../billing.module.css';
 
-const STATUS_LABELS = { draft: 'Brouillon', partial: 'Partielle', paid: 'Payée', overdue: 'En retard' };
-const STATUS_BADGE = {
-  draft: styles.badgeDraft, partial: styles.badgePartial, paid: styles.badgePaid, overdue: styles.badgeOverdue,
+const STATUS_LABELS = {
+  draft: 'Brouillon', sent: 'Envoyée', partially_paid: 'Partielle',
+  paid: 'Payée', overdue: 'En retard', cancelled: 'Annulée',
 };
-const FILTERS = ['', 'draft', 'partial', 'paid', 'overdue'];
+const STATUS_BADGE = {
+  draft: styles.badgeDraft, sent: styles.badgeDraft, partially_paid: styles.badgePartial,
+  paid: styles.badgePaid, overdue: styles.badgeOverdue, cancelled: styles.badgeDraft,
+};
+const FILTERS = ['', 'draft', 'sent', 'partially_paid', 'paid', 'overdue'];
 
 const formatAmount = (amount, currency) => `${Number(amount).toLocaleString('fr-FR')} ${currency || ''}`.trim();
 
