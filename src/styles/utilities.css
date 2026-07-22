@@ -1,4 +1,9 @@
 /* Layouts */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-xl); }
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
 .flex { display: flex; }
 .flex-col { display: flex; flex-direction: column; }
 .items-center { align-items: center; }

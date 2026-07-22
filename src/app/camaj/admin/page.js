@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ShieldCheck, ShieldAlert, RefreshCw, ChevronDown, ChevronUp,
-  Mail, Phone, Inbox,
+  Mail, Phone, Inbox, Download, Printer,
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { camajService } from '../../../services/camaj.service';
@@ -43,6 +43,8 @@ export default function CamajAdminPage() {
   const [refused, setRefused] = useState(false);
   const [ouvert, setOuvert] = useState(null); // id de la demande dépliée
   const [busyId, setBusyId] = useState(null);
+  const [exportBusy, setExportBusy] = useState(false);
+  const [donneesImpression, setDonneesImpression] = useState(null);
 
   // Redirige vers la connexion si non authentifié.
   useEffect(() => {
@@ -113,6 +115,73 @@ export default function CamajAdminPage() {
     }
   };
 
+  // Récupère l'ensemble des demandes correspondant aux filtres actifs
+  // (indépendamment de la pagination affichée à l'écran), pour export/impression.
+  const recupererEnsembleFiltre = async () => {
+    const res = await camajService.list({
+      type: filtreType || undefined,
+      status: filtreStatut || undefined,
+      page: 1,
+      limit: 1000,
+    });
+    return res.data.submissions;
+  };
+
+  const ligneCsv = (it) => {
+    const tm = typeMeta(it.type);
+    const sm = statusMeta(it.status);
+    const detail = detaillerPayload(it.payload)
+      .map(({ label, valeur }) => `${label}: ${valeur}`)
+      .join(' | ');
+    const champ = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    return [tm.label, it.nom, it.email, it.whatsapp, sm.label, formaterDate(it.created_at), detail]
+      .map(champ)
+      .join(';');
+  };
+
+  const exporterCsv = async () => {
+    setExportBusy(true);
+    setError('');
+    try {
+      const donnees = await recupererEnsembleFiltre();
+      const entete = ['Type', 'Nom', 'Email', 'WhatsApp', 'Statut', 'Date', 'Détail'].join(';');
+      const csv = [entete, ...donnees.map(ligneCsv)].join('\n');
+      const blob = new Blob([`﻿${csv}`], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `camaj-demandes-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(getApiError(err, "Impossible d'exporter la liste"));
+    } finally {
+      setExportBusy(false);
+    }
+  };
+
+  const imprimer = async () => {
+    setExportBusy(true);
+    setError('');
+    try {
+      const donnees = await recupererEnsembleFiltre();
+      setDonneesImpression(donnees);
+    } catch (err) {
+      setError(getApiError(err, "Impossible de préparer l'impression"));
+    } finally {
+      setExportBusy(false);
+    }
+  };
+
+  // Déclenche l'impression une fois les données prêtes, puis nettoie l'état.
+  useEffect(() => {
+    if (!donneesImpression) return undefined;
+    const t = setTimeout(() => window.print(), 50);
+    const onAfterPrint = () => setDonneesImpression(null);
+    window.addEventListener('afterprint', onAfterPrint);
+    return () => { clearTimeout(t); window.removeEventListener('afterprint', onAfterPrint); };
+  }, [donneesImpression]);
+
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   // --- États de garde ---
@@ -148,7 +217,8 @@ export default function CamajAdminPage() {
   }
 
   return (
-    <div className={`${styles.wrap} animate-fade-in`}>
+    <>
+    <div className={`${styles.wrap} ${styles.noPrint} animate-fade-in`}>
       <div className="mb-md"><BackButton fallbackHref="/camaj" /></div>
 
       <div className={styles.head}>
@@ -208,6 +278,26 @@ export default function CamajAdminPage() {
         </select>
 
         <span className={styles.spacer} />
+
+        <button
+          className={styles.pagerBtn}
+          onClick={exporterCsv}
+          disabled={exportBusy}
+          title="Exporter la liste filtrée en CSV"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          <Download size={15} /> Exporter CSV
+        </button>
+
+        <button
+          className={styles.pagerBtn}
+          onClick={imprimer}
+          disabled={exportBusy}
+          title="Imprimer la liste filtrée"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          <Printer size={15} /> Imprimer
+        </button>
 
         <button
           className={styles.pagerBtn}
@@ -335,5 +425,31 @@ export default function CamajAdminPage() {
         </>
       )}
     </div>
+
+    {/* Vue imprimable : masquée à l'écran, affichée uniquement via @media print */}
+    {donneesImpression && (
+      <div className={styles.printOnly}>
+        <h1>Demandes CAMAJ{filtreType ? ` — ${typeMeta(filtreType).label}` : ''}{filtreStatut ? ` — ${statusMeta(filtreStatut).label}` : ''}</h1>
+        <p>{donneesImpression.length} demande{donneesImpression.length > 1 ? 's' : ''} — généré le {formaterDate(new Date().toISOString())}</p>
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Nom</th><th>Email</th><th>WhatsApp</th><th>Statut</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            {donneesImpression.map((it) => (
+              <tr key={it.id}>
+                <td>{typeMeta(it.type).label}</td>
+                <td>{it.nom || '—'}</td>
+                <td>{it.email || '—'}</td>
+                <td>{it.whatsapp || '—'}</td>
+                <td>{statusMeta(it.status).label}</td>
+                <td>{formaterDate(it.created_at)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+    </>
   );
 }

@@ -6,7 +6,10 @@
 
 body {
   background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-sans);
   transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
 }
 
 .container {
@@ -25,15 +28,18 @@ input, textarea, select {
   padding: var(--spacing-sm) var(--spacing-md);
   font-family: var(--font-sans);
   transition: all 0.2s ease;
+  width: 100%;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+  box-shadow: 0 0 0 2px rgba(201, 160, 56, 0.2); /* using gold */
 }
 
 button {
   cursor: pointer;
   font-family: var(--font-sans);
+  border: none;
+  background: none;
 }

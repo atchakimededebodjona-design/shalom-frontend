@@ -7,7 +7,6 @@ import { Search, ShieldCheck, Menu, X, MessageSquare } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { NotificationBell } from '../notifications/NotificationBell';
-import { AuthLogo } from './AuthLogo';
 import styles from './Navbar.module.css';
 
 // Pages sans chrome (plein écran)
@@ -17,16 +16,12 @@ const BARE_ROUTES = ['/login', '/register'];
 const LIENS = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/groups', label: 'Groupes' },
-  { href: '/messages', label: 'Messages' },
   { href: '/community', label: 'Communauté' },
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/wallet', label: 'Portefeuille' },
-  { href: '/recu', label: 'Reçu+' },
   { href: '/tools', label: 'Outils' },
   { href: '/shalom-tv', label: 'Shalom TV' },
-  { href: '/ambassador', label: 'Ambassadeur' },
-  { href: '/billing', label: 'Reçu+' },
   { href: '/profile', label: 'Profil' },
 ];
 
@@ -57,7 +52,8 @@ export const Navbar = () => {
       <div className="container">
         <div className={styles.inner}>
           <Link href="/" className={styles.brand} onClick={fermer} aria-label="Accueil SHALOM">
-            <AuthLogo className={styles.brandLogo} alt="SHALOM" fallbackSize="1.5rem" />
+            <img src="/icons/icon-192.png" alt="" className={styles.brandLogo} />
+            SHALOM
           </Link>
 
           {user ? (

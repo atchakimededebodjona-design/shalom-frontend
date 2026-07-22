@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Settings, Plus } from 'lucide-react';
+import { Settings, Plus, Flag, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { adsService } from '../../services/ads.service';
 import styles from './ads.module.css';
@@ -11,6 +11,25 @@ import styles from './ads.module.css';
 // (ex. image hébergée sur un autre environnement).
 function AdTile({ ad }) {
   const [broken, setBroken] = useState(false);
+  const [reported, setReported] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const signaler = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (reported || sending) return;
+    const motif = window.prompt('Pourquoi signaler cette publicité ? (optionnel)') || undefined;
+    setSending(true);
+    try {
+      await adsService.report(ad.id, motif);
+      setReported(true);
+    } catch {
+      // silencieux : signalement accessoire, ne doit pas perturber la navigation
+    } finally {
+      setSending(false);
+    }
+  };
+
   const inner = broken ? (
     <span className={styles.adFallback}>{ad.title}</span>
   ) : (
@@ -22,12 +41,30 @@ function AdTile({ ad }) {
       onError={() => setBroken(true)}
     />
   );
+
+  const reportBtn = (
+    <button
+      type="button"
+      className={styles.reportBtn}
+      onClick={signaler}
+      disabled={sending}
+      title={reported ? 'Signalé, merci' : 'Signaler cette publicité'}
+      aria-label={reported ? 'Publicité signalée' : 'Signaler cette publicité'}
+    >
+      {reported ? <Check size={12} /> : <Flag size={12} />}
+    </button>
+  );
+
   return ad.link_url ? (
     <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className={styles.ad} title={ad.title}>
       {inner}
+      {reportBtn}
     </a>
   ) : (
-    <div className={styles.ad} title={ad.title}>{inner}</div>
+    <div className={styles.ad} title={ad.title}>
+      {inner}
+      {reportBtn}
+    </div>
   );
 }
 

@@ -4,6 +4,25 @@
   padding: var(--spacing-xl) var(--spacing-md) var(--spacing-2xl);
 }
 
+/* Vue imprimable : invisible à l'écran, seule visible au moment de l'impression */
+.printOnly { display: none; }
+
+@media print {
+  .noPrint { display: none !important; }
+  .printOnly {
+    display: block;
+    color: #000;
+    background: #fff;
+  }
+  .printOnly table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .printOnly th, .printOnly td {
+    border: 1px solid #999;
+    padding: 4px 6px;
+    text-align: left;
+  }
+  .printOnly th { background: #eee; }
+}
+
 .head {
   display: flex;
   align-items: center;

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Megaphone, Pencil, Trash2, Eye, EyeOff, Upload, X } from 'lucide-react';
+import { Megaphone, Pencil, Trash2, Eye, EyeOff, Upload, X, Flag, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { adsService } from '../../../../services/ads.service';
 import { uploadService } from '../../../../services/upload.service';
@@ -23,6 +23,9 @@ export default function AdminPublicitesPage() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [ouvert, setOuvert] = useState(null); // id de la pub dont les signalements sont dépliés
+  const [reportsById, setReportsById] = useState({});
+  const [loadingReports, setLoadingReports] = useState(false);
 
   // Garde d'accès : admins uniquement.
   useEffect(() => {
@@ -123,6 +126,21 @@ export default function AdminPublicitesPage() {
     }
   };
 
+  const toggleReports = async (ad) => {
+    if (ouvert === ad.id) { setOuvert(null); return; }
+    setOuvert(ad.id);
+    if (reportsById[ad.id]) return; // déjà chargé
+    setLoadingReports(true);
+    try {
+      const res = await adsService.getReports(ad.id);
+      setReportsById((prev) => ({ ...prev, [ad.id]: res.data.reports }));
+    } catch {
+      setReportsById((prev) => ({ ...prev, [ad.id]: [] }));
+    } finally {
+      setLoadingReports(false);
+    }
+  };
+
   const remove = async (ad) => {
     if (!window.confirm(`Supprimer la publicité « ${ad.title} » ?`)) return;
     setError('');
@@ -216,29 +234,65 @@ export default function AdminPublicitesPage() {
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <thead>
-                  <tr><th>Image</th><th>Titre</th><th>Ordre</th><th>Statut</th><th></th></tr>
+                  <tr><th>Image</th><th>Titre</th><th>Ordre</th><th>Statut</th><th>Signalements</th><th></th></tr>
                 </thead>
                 <tbody>
                   {ads.map((ad) => (
-                    <tr key={ad.id}>
-                      <td><img className={styles.thumb} src={ad.image_url} alt={ad.title} /></td>
-                      <td>{ad.title}{ad.link_url ? <div className="text-muted text-sm">🔗 lien</div> : null}</td>
-                      <td>{ad.display_order}</td>
-                      <td>
-                        <span className={`${styles.badge} ${ad.is_active ? styles.badgeOn : styles.badgeOff}`}>
-                          {ad.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td>
-                        <div className={styles.rowActions}>
-                          <button className={styles.iconBtn} onClick={() => editAd(ad)} title="Modifier"><Pencil size={14} /></button>
-                          <button className={styles.iconBtn} onClick={() => toggleActive(ad)} title={ad.is_active ? 'Désactiver' : 'Activer'}>
-                            {ad.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
-                          </button>
-                          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(ad)} title="Supprimer"><Trash2 size={14} /></button>
-                        </div>
-                      </td>
-                    </tr>
+                    <Fragment key={ad.id}>
+                      <tr>
+                        <td><img className={styles.thumb} src={ad.image_url} alt={ad.title} /></td>
+                        <td>{ad.title}{ad.link_url ? <div className="text-muted text-sm">🔗 lien</div> : null}</td>
+                        <td>{ad.display_order}</td>
+                        <td>
+                          <span className={`${styles.badge} ${ad.is_active ? styles.badgeOn : styles.badgeOff}`}>
+                            {ad.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td>
+                          {ad.report_count > 0 ? (
+                            <button
+                              className={`${styles.badge} ${styles.badgeReport}`}
+                              onClick={() => toggleReports(ad)}
+                              title="Voir les motifs"
+                            >
+                              <Flag size={12} /> {ad.report_count}
+                              {ouvert === ad.id ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                            </button>
+                          ) : (
+                            <span className="text-muted text-sm">—</span>
+                          )}
+                        </td>
+                        <td>
+                          <div className={styles.rowActions}>
+                            <button className={styles.iconBtn} onClick={() => editAd(ad)} title="Modifier"><Pencil size={14} /></button>
+                            <button className={styles.iconBtn} onClick={() => toggleActive(ad)} title={ad.is_active ? 'Désactiver' : 'Activer'}>
+                              {ad.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                            <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(ad)} title="Supprimer"><Trash2 size={14} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                      {ouvert === ad.id && (
+                        <tr>
+                          <td colSpan={6} className={styles.reportsDetail}>
+                            {loadingReports && !reportsById[ad.id] ? (
+                              <span className="text-muted">Chargement des motifs…</span>
+                            ) : (reportsById[ad.id]?.length ?? 0) === 0 ? (
+                              <span className="text-muted">Aucun motif renseigné.</span>
+                            ) : (
+                              <ul className={styles.reportsList}>
+                                {reportsById[ad.id].map((r) => (
+                                  <li key={r.id}>
+                                    <strong>{r.display_name || r.email}</strong>
+                                    {r.reason ? ` — ${r.reason}` : ' — (aucun motif)'}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>

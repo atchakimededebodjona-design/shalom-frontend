@@ -41,7 +41,9 @@ export default function Dashboard() {
           <h3 className={styles.welcome}>Bienvenue, {user.display_name}</h3>
           <nav className={styles.nav}>
             <span className={`${styles.navItem} ${styles.navItemActive}`}>Fil d'actualité</span>
-            <Link href="/camaj" className={styles.navItem}>Programme CAMAJ</Link>
+            <Link href="/camaj" aria-label="Programme CAMAJ" title="Programme CAMAJ">
+              <img src="/camaj-logo.png" alt="Programme CAMAJ" className={styles.camajLogo} />
+            </Link>
           </nav>
         </aside>
 

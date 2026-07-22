@@ -54,6 +54,36 @@ const ambassadorService = {
     const response = await api.post(`${AMBASSADOR_BASE}/withdrawals`, data);
     return response.data;
   },
+
+  // 7. Administration (réservé aux administrateurs SHALOM)
+  adminList: async (params = {}) => {
+    const response = await api.get(`${AMBASSADOR_BASE}/admin/list`, { params });
+    return response.data;
+  },
+  adminSetLevel: async (id, level) => {
+    const response = await api.patch(`${AMBASSADOR_BASE}/admin/${id}/level`, { level });
+    return response.data;
+  },
+  adminSetStatus: async (id, status) => {
+    const response = await api.patch(`${AMBASSADOR_BASE}/admin/${id}/status`, { status });
+    return response.data;
+  },
+  adminListCommissions: async (params = {}) => {
+    const response = await api.get(`${AMBASSADOR_BASE}/admin/commissions`, { params });
+    return response.data;
+  },
+  adminApproveCommission: async (id) => {
+    const response = await api.patch(`${AMBASSADOR_BASE}/admin/commissions/${id}`);
+    return response.data;
+  },
+  adminListWithdrawals: async (params = {}) => {
+    const response = await api.get(`${AMBASSADOR_BASE}/admin/withdrawals`, { params });
+    return response.data;
+  },
+  adminProcessWithdrawal: async (id, body) => {
+    const response = await api.patch(`${AMBASSADOR_BASE}/admin/withdrawals/${id}`, body);
+    return response.data;
+  },
 };
 
 export default ambassadorService;

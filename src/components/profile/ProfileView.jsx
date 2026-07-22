@@ -92,7 +92,13 @@ export const ProfileView = ({
   return (
     <div
       className="glass"
-      style={{ borderRadius: 'var(--radius-lg)', maxWidth: '600px', margin: '0 auto', overflow: 'hidden' }}
+      style={{ 
+        borderRadius: 'var(--radius-2xl)', 
+        maxWidth: '640px', 
+        margin: '0 auto', 
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-lg), 0 0 0 1px var(--glass-border)'
+      }}
     >
       {/* Bannière de couverture (cliquable en mode édition) */}
       <div style={{ position: 'relative' }}>
@@ -112,11 +118,11 @@ export const ProfileView = ({
               : undefined
           }
           style={{
-            height: '140px',
+            height: '180px',
             cursor: editable ? 'pointer' : 'default',
             background: profile.cover_url
               ? `center / cover no-repeat url(${resolveMediaUrl(profile.cover_url)})`
-              : 'linear-gradient(120deg, var(--primary), var(--secondary))',
+              : 'var(--gradient-primary)',
           }}
         />
         {editable && (
@@ -132,28 +138,30 @@ export const ProfileView = ({
               aria-hidden="true"
               style={{
                 position: 'absolute',
-                top: 'var(--spacing-sm)',
-                right: 'var(--spacing-sm)',
+                top: 'var(--spacing-md)',
+                right: 'var(--spacing-md)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
-                background: 'rgba(0,0,0,0.55)',
+                gap: '8px',
+                background: 'rgba(10, 22, 38, 0.6)',
+                backdropFilter: 'blur(8px)',
                 color: '#fff',
-                padding: '6px 10px',
+                padding: '8px 12px',
                 borderRadius: 'var(--radius-full)',
-                fontSize: '0.75rem',
+                fontSize: '0.85rem',
                 fontWeight: 'bold',
                 pointerEvents: 'none',
+                boxShadow: 'var(--shadow-sm)'
               }}
             >
-              {uploading.cover ? <LoaderCircle size={14} className="animate-spin" /> : <Camera size={14} />}
+              {uploading.cover ? <LoaderCircle size={16} className="animate-spin" /> : <Camera size={16} />}
               {uploading.cover ? 'Envoi…' : 'Couverture'}
             </div>
           </>
         )}
       </div>
 
-      <div className="flex-col items-center text-center p-lg" style={{ marginTop: '-56px' }}>
+      <div className="flex-col items-center text-center p-xl" style={{ marginTop: '-72px', background: 'var(--bg-color-alt)' }}>
         {/* Avatar (cliquable en mode édition) */}
         <div style={{ position: 'relative' }}>
           <div
@@ -172,14 +180,15 @@ export const ProfileView = ({
                 : undefined
             }
             style={{
-              border: '4px solid var(--bg-color-alt)',
+              border: '6px solid var(--bg-color-alt)',
               borderRadius: 'var(--radius-full)',
               cursor: editable ? 'pointer' : 'default',
               position: 'relative',
               lineHeight: 0,
+              boxShadow: 'var(--shadow-md)'
             }}
           >
-            <Avatar src={profile.avatar_url} name={profile.display_name} size={100} />
+            <Avatar src={profile.avatar_url} name={profile.display_name} size={120} />
             {editable && uploading.avatar && (
               <div
                 aria-hidden="true"
@@ -211,21 +220,22 @@ export const ProfileView = ({
                 aria-hidden="true"
                 style={{
                   position: 'absolute',
-                  bottom: 4,
-                  right: 4,
-                  width: 30,
-                  height: 30,
+                  bottom: 6,
+                  right: 6,
+                  width: 36,
+                  height: 36,
                   borderRadius: 'var(--radius-full)',
-                  background: 'var(--primary)',
+                  background: 'var(--gradient-primary)',
                   color: 'var(--on-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: '2px solid var(--bg-color-alt)',
+                  border: '3px solid var(--bg-color-alt)',
                   pointerEvents: 'none',
+                  boxShadow: 'var(--shadow-sm)'
                 }}
               >
-                <Camera size={15} />
+                <Camera size={16} />
               </div>
             </>
           )}
@@ -235,26 +245,26 @@ export const ProfileView = ({
           <p className="text-sm" style={{ color: 'red', marginTop: 'var(--spacing-xs)' }}>{photoError}</p>
         )}
 
-        <div className="flex items-center gap-xs" style={{ marginTop: 'var(--spacing-sm)' }}>
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>{profile.display_name}</h1>
-          {profile.is_verified && <BadgeCheck size={20} color="var(--secondary)" aria-label="Vérifié" />}
-          {profile.is_ambassador && <Star size={18} color="var(--accent)" aria-label="Ambassadeur" />}
+        <div className="flex items-center gap-sm" style={{ marginTop: 'var(--spacing-md)' }}>
+          <h1 style={{ margin: 0, fontSize: '1.75rem', color: 'var(--secondary)' }}>{profile.display_name}</h1>
+          {profile.is_verified && <BadgeCheck size={24} color="var(--primary)" aria-label="Vérifié" />}
+          {profile.is_ambassador && <Star size={22} color="var(--primary)" aria-label="Ambassadeur" />}
         </div>
 
-        {email && <p className="text-muted text-sm">{email}</p>}
+        {email && <p className="text-muted text-md" style={{ marginTop: 'var(--spacing-xs)' }}>{email}</p>}
 
-        {profile.bio && <p style={{ marginTop: 'var(--spacing-sm)' }}>{profile.bio}</p>}
+        {profile.bio && <p style={{ marginTop: 'var(--spacing-md)', maxWidth: '480px', lineHeight: 1.6 }}>{profile.bio}</p>}
 
         {/* Détails */}
-        <div className="flex-col gap-xs" style={{ marginTop: 'var(--spacing-md)', alignItems: 'center' }}>
-          <DetailRow icon={<MapPin size={15} />}>{location}</DetailRow>
-          <DetailRow icon={<Church size={15} />}>
+        <div className="flex-col gap-sm" style={{ marginTop: 'var(--spacing-lg)', alignItems: 'center' }}>
+          <DetailRow icon={<MapPin size={16} color="var(--primary)" />}>{location}</DetailRow>
+          <DetailRow icon={<Church size={16} color="var(--primary)" />}>
             {[profile.church_name, profile.denomination].filter(Boolean).join(' · ')}
           </DetailRow>
           {profile.website && (
             <div className="flex items-center gap-sm text-sm">
-              <Globe size={15} color="var(--text-muted)" />
-              <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-primary">
+              <Globe size={16} color="var(--primary)" />
+              <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-primary hover-lift" style={{ fontWeight: 'bold' }}>
                 {profile.website.replace(/^https?:\/\//, '')}
               </a>
             </div>
@@ -262,12 +272,12 @@ export const ProfileView = ({
         </div>
 
         {/* Statistiques */}
-        <div className="flex items-center justify-center" style={{ marginTop: 'var(--spacing-md)' }}>
+        <div className="flex items-center justify-center gap-xl" style={{ marginTop: 'var(--spacing-xl)', padding: 'var(--spacing-md) 0', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', width: '100%' }}>
           <StatButton label="Abonnés" value={followersCount} onClick={onOpenFollowers} />
           <StatButton label="Abonnements" value={followingCount} onClick={onOpenFollowing} />
         </div>
 
-        {action && <div style={{ marginTop: 'var(--spacing-md)' }}>{action}</div>}
+        {action && <div style={{ marginTop: 'var(--spacing-xl)' }}>{action}</div>}
       </div>
     </div>
   );

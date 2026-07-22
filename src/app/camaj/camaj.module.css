@@ -30,13 +30,13 @@
 .logoTile {
   display: inline-flex;
   background: #FFFFFF;
-  padding: var(--spacing-md);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .logo {
-  width: 160px;
+  width: 180px;
   height: auto;
   display: block;
 }
@@ -44,9 +44,9 @@
 /* Rappel tricolore du logo, en filet sous le hero. */
 .tricolor {
   display: flex;
-  width: 96px;
-  height: 4px;
-  margin: var(--spacing-lg) auto 0;
+  width: 120px;
+  height: 6px;
+  margin: var(--spacing-xl) auto 0;
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -61,32 +61,39 @@
 
 /* Liseré coloré en tête de carte : porte la couleur d'accent du programme. */
 .programCard {
-  border-top: 3px solid var(--card-accent);
+  border-top: 4px solid var(--card-accent);
+  box-shadow: var(--shadow-md);
+  background: var(--bg-color-alt);
+  border-radius: var(--radius-xl);
 }
 
 /* Pastille numérotée. Le blanc sur l'orange ne donne que 3.15:1 : il faut
    franchir le seuil "texte large" de WCAG (gras >= 18.66px) pour que 3:1
    suffise, d'où 1.2rem = 19.2px. Ne pas réduire sans assombrir l'orange. */
 .badge {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   flex-shrink: 0;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   border-radius: var(--radius-full);
   background-color: var(--card-accent);
   color: var(--on-primary);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .note {
-  border-left: 2px solid var(--camaj-orange);
+  border-left: 3px solid var(--camaj-orange);
+  background: rgba(254, 89, 1, 0.05);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--spacing-sm);
 }
 
 /* Appels à l'action : 2 colonnes, 1 seule sous ~560px. */
 .ctaGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--spacing-md);
-  max-width: 620px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--spacing-lg);
+  max-width: 680px;
   margin: 0 auto;
 }
 
@@ -98,18 +105,24 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--radius-md);
-  font-size: 1.2rem;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  font-size: 1.25rem;
   font-weight: bold;
   border: 2px solid transparent;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .ctaSolid {
   background-color: var(--cta-color);
   color: #FFFFFF;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.ctaSolid:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
 }
 
 .ctaOutline {
@@ -133,21 +146,26 @@
    cette variable s'éclaircit, ce qui rendrait le texte blanc illisible. Ce
    bloc est foncé par construction, dans les deux thèmes. */
 .aide {
-  margin-top: var(--spacing-2xl);
-  padding: var(--spacing-2xl) var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  background-color: #012963;
+  margin-top: var(--spacing-3xl);
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(135deg, #012963 0%, #011E48 100%);
   text-align: center;
+  box-shadow: 0 20px 40px rgba(1, 41, 99, 0.2);
 }
 
 .aideTitre {
   color: #FFFFFF;
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
 }
 
 .aideTexte {
-  color: rgba(255, 255, 255, 0.85);
-  max-width: 620px;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 680px;
   margin: 0 auto var(--spacing-xl);
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .aideBouton {
@@ -155,10 +173,16 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-md) var(--spacing-xl);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background-color: #FFFFFF;
   color: #012963;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-decoration: none;
+}
+.aideBouton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }

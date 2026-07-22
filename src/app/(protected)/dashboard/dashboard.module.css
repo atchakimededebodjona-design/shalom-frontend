@@ -1,0 +1,79 @@
+/* src/app/(protected)/dashboard/dashboard.module.css */
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sidebar {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  position: sticky;
+  top: 100px; /* Below navbar */
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--glass-border);
+}
+
+.welcome {
+  color: var(--text-color);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.navItem {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+.navItem:hover {
+  background: var(--bg-color-alt);
+  color: var(--primary);
+}
+
+.navItemActive {
+  color: var(--primary);
+  background: var(--bg-color-alt);
+  border-left: 3px solid var(--primary);
+}
+
+/* Lien logo CAMAJ — badge circulaire */
+.camajLogo {
+  height: 2.5rem;
+  width: 2.5rem;
+  object-fit: cover;
+  border-radius: var(--radius-full);
+  background: #fff;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.camajLogo:hover {
+  transform: scale(1.05);
+}
+
+.feed {
+  min-width: 0;
+}

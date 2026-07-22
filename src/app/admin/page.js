@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, ShieldAlert, Flag, Inbox, Tv, Megaphone } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Flag, Inbox, Tv, Megaphone, Award, Users } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './admin.module.css';
 
@@ -61,10 +61,22 @@ export default function AdminHubPage() {
           <span className={styles.cardDesc}>Ajouter et gérer les vidéos, podcasts, articles et photos.</span>
         </Link>
 
-        <Link href="/admin/ads" className={styles.card}>
+        <Link href="/admin/publicites" className={styles.card}>
           <Megaphone size={24} className={styles.cardIcon} />
           <span className={styles.cardTitle}>Publicités</span>
-          <span className={styles.cardDesc}>Gérer l&apos;espace publicitaire affiché sur le fil d&apos;actualité.</span>
+          <span className={styles.cardDesc}>Gérer l&apos;espace publicitaire, retirer les publicités signalées.</span>
+        </Link>
+
+        <Link href="/admin/ambassadors" className={styles.card}>
+          <Award size={24} className={styles.cardIcon} />
+          <span className={styles.cardTitle}>Ambassadeurs</span>
+          <span className={styles.cardDesc}>Certifier les ambassadeurs, gérer statuts, commissions et retraits.</span>
+        </Link>
+
+        <Link href="/admin/conseillers" className={styles.card}>
+          <Users size={24} className={styles.cardIcon} />
+          <span className={styles.cardTitle}>Conseillers</span>
+          <span className={styles.cardDesc}>Annuaire des conseillers en accompagnement.</span>
         </Link>
       </div>
     </div>

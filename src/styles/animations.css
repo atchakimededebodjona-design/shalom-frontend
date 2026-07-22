@@ -91,8 +91,8 @@
 /* Logo en tête de la page d'accueil : plus grand, sans cadre */
 .hero-logo {
   display: block;
-  width: 90%;
-  max-width: 440px;
+  width: 65%;
+  max-width: 320px;
   height: auto;
   margin: 0 auto var(--spacing-sm);
   animation: logoIn 0.6s ease-out both, logoFloat 4.5s ease-in-out 0.7s infinite;

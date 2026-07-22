@@ -5,8 +5,10 @@ import api from './api';
 // (listAll / create / update / remove) est r├®serv├®e aux administrateurs c├┤t├® API.
 export const adsService = {
   list: async () => (await api.get('/ads')).data,            // annonces actives (bandeau)
-  listAll: async () => (await api.get('/ads/manage')).data,  // toutes (admin)
+  listAll: async () => (await api.get('/ads/manage')).data,  // toutes (admin) + report_count
   create: async (body) => (await api.post('/ads', body)).data,
   update: async (id, body) => (await api.patch(`/ads/${id}`, body)).data,
   remove: async (id) => (await api.delete(`/ads/${id}`)).data,
+  report: async (id, reason) => (await api.post(`/ads/${id}/report`, { reason })).data,
+  getReports: async (id) => (await api.get(`/ads/${id}/reports`)).data,
 };
