@@ -81,7 +81,7 @@ export default function Register() {
             Au moins 8 caractères, dont une majuscule et un chiffre.
           </p>
         </div>
-        <Button type="submit" variant="primary" isLoading={loading} style={{ width: '100%', marginTop: '0.75rem', padding: 'var(--spacing-md)', fontSize: '1.1rem', background: 'var(--gradient-primary)', border: 'none', color: '#0A1626', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(201, 160, 56, 0.3)' }}>
+        <Button type="submit" variant="primary" isLoading={loading} style={{ width: '100%', marginTop: '0.75rem', padding: 'var(--spacing-md)', fontSize: '1.1rem', backgroundImage: 'var(--gradient-primary)', color: 'var(--on-primary)', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(201, 160, 56, 0.3)' }}>
           S'inscrire
         </Button>
       </form>

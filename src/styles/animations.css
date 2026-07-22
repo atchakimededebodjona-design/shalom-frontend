@@ -82,6 +82,7 @@
   width: 72%;
   max-width: 260px;
   height: auto;
+  object-fit: contain;
   margin: 0 auto var(--spacing-sm);
   border-radius: 20px;
   box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.55);
@@ -91,9 +92,10 @@
 /* Logo en tête de la page d'accueil : plus grand, sans cadre */
 .hero-logo {
   display: block;
-  width: 65%;
-  max-width: 320px;
+  width: 100%;
+  max-width: 400px;
   height: auto;
+  object-fit: contain;
   margin: 0 auto var(--spacing-sm);
   animation: logoIn 0.6s ease-out both, logoFloat 4.5s ease-in-out 0.7s infinite;
 }
