@@ -9,9 +9,13 @@ import { resolveMediaUrl } from '../../../../../utils/resolveMediaUrl';
 import { ArrowLeft, Printer, MessageCircle, Trash2, Plus } from 'lucide-react';
 import styles from '../../billing.module.css';
 
-const STATUS_LABELS = { draft: 'Brouillon', partial: 'Partielle', paid: 'Payée', overdue: 'En retard' };
+const STATUS_LABELS = {
+  draft: 'Brouillon', sent: 'Envoyée', partially_paid: 'Partielle',
+  paid: 'Payée', overdue: 'En retard', cancelled: 'Annulée',
+};
 const STATUS_BADGE = {
-  draft: styles.badgeDraft, partial: styles.badgePartial, paid: styles.badgePaid, overdue: styles.badgeOverdue,
+  draft: styles.badgeDraft, sent: styles.badgeDraft, partially_paid: styles.badgePartial,
+  paid: styles.badgePaid, overdue: styles.badgeOverdue, cancelled: styles.badgeDraft,
 };
 
 const PAYMENT_METHODS = [
@@ -30,7 +34,6 @@ export default function InvoiceDetailPage() {
   const [invoice, setInvoice] = useState(null);
   const [payments, setPayments] = useState([]);
   const [business, setBusiness] = useState(null);
-  const [clientName, setClientName] = useState('');
   const [currency, setCurrency] = useState('XOF');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -54,15 +57,7 @@ export default function InvoiceDetailPage() {
       setInvoice(invoiceRes.data.invoice);
       setPayments(paymentsRes.data.payments || []);
       setBusiness(businessRes.data.business);
-      setCurrency(businessRes.data.business.currency || 'XOF');
-
-      try {
-        const clientsRes = await billingService.listClients({ limit: 100 });
-        const client = clientsRes.data.clients.find((c) => c.id === invoiceRes.data.invoice.client_id);
-        setClientName(client?.name || '');
-      } catch {
-        // non bloquant
-      }
+      setCurrency(businessRes.data.business.currency || invoiceRes.data.invoice.currency || 'XOF');
     } catch (err) {
       setError(getApiError(err, 'Erreur lors du chargement de la facture.'));
     } finally {
@@ -110,9 +105,9 @@ export default function InvoiceDetailPage() {
     try {
       await billingService.createPayment(invoiceId, {
         amount: parseInt(paymentForm.amount, 10),
-        payment_method: paymentForm.payment_method,
-        reference_id: paymentForm.reference_id || undefined,
-        payment_date: paymentForm.payment_date || undefined,
+        method: paymentForm.payment_method,
+        reference: paymentForm.reference_id || undefined,
+        paid_at: paymentForm.payment_date || undefined,
       });
       setShowPaymentForm(false);
       setPaymentForm({ amount: '', payment_method: 'cash', reference_id: '', payment_date: '' });
@@ -121,17 +116,6 @@ export default function InvoiceDetailPage() {
       setActionError(getApiError(err, "Erreur lors de l'enregistrement du paiement."));
     } finally {
       setPaymentSaving(false);
-    }
-  };
-
-  const handleDeletePayment = async (paymentId) => {
-    if (!confirm('Annuler ce paiement ?')) return;
-    setActionError('');
-    try {
-      await billingService.deletePayment(paymentId);
-      fetchAll();
-    } catch (err) {
-      setActionError(getApiError(err, "Erreur lors de l'annulation du paiement."));
     }
   };
 
@@ -154,7 +138,7 @@ export default function InvoiceDetailPage() {
     );
   }
 
-  const remaining = invoice.total - (invoice.discount_amount || 0) - invoice.amount_paid;
+  const remaining = invoice.total - invoice.amount_paid;
 
   return (
     <div className={styles.containerWide}>
@@ -184,7 +168,7 @@ export default function InvoiceDetailPage() {
         <div>
           <div className={styles.invoiceNumber}>{invoice.invoice_number}</div>
           <div className={styles.invoiceMeta}>
-            {clientName && <>Client : <strong>{clientName}</strong> · </>}
+            {invoice.client_name && <>Client : <strong>{invoice.client_name}</strong> · </>}
             Émise le {new Date(invoice.issue_date).toLocaleDateString('fr-FR')}
             {invoice.due_date && ` · Échéance le ${new Date(invoice.due_date).toLocaleDateString('fr-FR')}`}
           </div>
@@ -209,7 +193,7 @@ export default function InvoiceDetailPage() {
 
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>Articles</h2>
-        <table className={styles.itemsTable}>
+        <div className={styles.itemsScroll}><table className={styles.itemsTable}>
           <thead>
             <tr>
               <th style={{ width: '50%' }}>Description</th>
@@ -224,19 +208,16 @@ export default function InvoiceDetailPage() {
                 <td>{item.description}</td>
                 <td>{Number(item.quantity)}</td>
                 <td>{formatAmount(item.unit_price)}</td>
-                <td>{formatAmount(item.line_total)}</td>
+                <td>{formatAmount(item.amount)}</td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
 
         <div className={styles.totalsBox} style={{ marginTop: 'var(--spacing-xl)' }}>
           <div className={styles.totalsRow}><span>Sous-total</span><span>{formatAmount(invoice.subtotal)}</span></div>
           <div className={styles.totalsRow}><span>TVA ({Number(invoice.tax_rate)}%)</span><span>{formatAmount(invoice.tax_amount)}</span></div>
           <div className={`${styles.totalsRow} ${styles.totalsRowFinal}`}><span>Total</span><span>{formatAmount(invoice.total)}</span></div>
-          {invoice.discount_amount > 0 && (
-            <div className={styles.totalsRow}><span>Remise</span><span>-{formatAmount(invoice.discount_amount)}</span></div>
-          )}
           <div className={styles.totalsRow}><span>Payé</span><span>{formatAmount(invoice.amount_paid)}</span></div>
           <div className={`${styles.totalsRow} ${styles.totalsRowDue}`}><span>Solde dû</span><span>{formatAmount(remaining)}</span></div>
         </div>
@@ -307,26 +288,20 @@ export default function InvoiceDetailPage() {
                 <th>Montant</th>
                 <th>Méthode</th>
                 <th>Référence</th>
-                <th className={styles.actionsCell}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {payments.map((p) => (
                 <tr key={p.id}>
-                  <td>{new Date(p.payment_date).toLocaleDateString('fr-FR')}</td>
+                  <td>{new Date(p.paid_at).toLocaleDateString('fr-FR')}</td>
                   <td>{formatAmount(p.amount)}</td>
-                  <td>{PAYMENT_METHODS.find((m) => m.value === p.payment_method)?.label || p.payment_method}</td>
-                  <td>{p.reference_id || '—'}</td>
-                  <td className={styles.actionsCell}>
-                    <button onClick={() => handleDeletePayment(p.id)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`}>
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
+                  <td>{PAYMENT_METHODS.find((m) => m.value === p.method)?.label || p.method}</td>
+                  <td>{p.reference || '—'}</td>
                 </tr>
               ))}
               {payments.length === 0 && (
                 <tr>
-                  <td colSpan="5" className={styles.emptyRow}>Aucun paiement enregistré.</td>
+                  <td colSpan="4" className={styles.emptyRow}>Aucun paiement enregistré.</td>
                 </tr>
               )}
             </tbody>

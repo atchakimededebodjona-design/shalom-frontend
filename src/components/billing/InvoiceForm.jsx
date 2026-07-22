@@ -66,10 +66,6 @@ export function InvoiceForm({ business, clients, onCreated, onCancel }) {
                 <input type="number" min="0" max="100" step="0.01" value={f.taxRate} onChange={(e) => f.setTaxRate(e.target.value)} />
               </div>
               <div>
-                <label className={styles.label}>Remise</label>
-                <input type="number" min="0" value={f.discountAmount} onChange={(e) => f.setDiscountAmount(e.target.value)} />
-              </div>
-              <div>
                 <label className={styles.label}>Acompte payé</label>
                 <input type="number" min="0" value={f.downPayment} onChange={(e) => f.setDownPayment(e.target.value)} />
                 <p className={styles.helperText}>Enregistré comme un paiement dès la création</p>
@@ -83,7 +79,7 @@ export function InvoiceForm({ business, clients, onCreated, onCancel }) {
 
           <div className={styles.card}>
             <h2 className={styles.sectionTitle}>Articles</h2>
-            <table className={styles.itemsTable}>
+            <div className={styles.itemsScroll}><table className={styles.itemsTable}>
               <thead>
                 <tr>
                   <th style={{ width: '45%' }}>Description</th>
@@ -137,7 +133,7 @@ export function InvoiceForm({ business, clients, onCreated, onCancel }) {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
             <button type="button" onClick={f.addItem} className={styles.addItemBtn}>
               <Plus size={16} /> Ajouter un article
             </button>
@@ -146,15 +142,12 @@ export function InvoiceForm({ business, clients, onCreated, onCancel }) {
               <div className={styles.totalsRow}><span>Sous-total</span><span>{f.formatAmount(f.subtotal)}</span></div>
               <div className={styles.totalsRow}><span>TVA ({f.taxRate || 0}%)</span><span>{f.formatAmount(f.taxAmount)}</span></div>
               <div className={`${styles.totalsRow} ${styles.totalsRowFinal}`}><span>Total</span><span>{f.formatAmount(f.total)}</span></div>
-              {parseInt(f.discountAmount, 10) > 0 && (
-                <div className={styles.totalsRow}><span>Remise</span><span>-{f.formatAmount(f.discountAmount)}</span></div>
-              )}
               {parseInt(f.downPayment, 10) > 0 && (
                 <div className={styles.totalsRow}><span>Acompte payé</span><span>-{f.formatAmount(f.downPayment)}</span></div>
               )}
               <div className={`${styles.totalsRow} ${styles.totalsRowDue}`}>
                 <span>Net à payer</span>
-                <span>{f.formatAmount(Math.max(0, f.netToPay - (parseInt(f.downPayment, 10) || 0)))}</span>
+                <span>{f.formatAmount(Math.max(0, f.total - (parseInt(f.downPayment, 10) || 0)))}</span>
               </div>
             </div>
           </div>

@@ -1,0 +1,49 @@
+/* Barre de navigation du fil : libellé à gauche, logo CAMAJ à l'extrême droite. */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.navItem {
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+}
+
+.navItemActive {
+  color: var(--primary);
+}
+
+/* Programme CAMAJ — poussé complètement à droite et affiché sous forme de logo. */
+.camajLink {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+  border-radius: 10px;
+  transition: transform 0.15s ease;
+}
+
+.camajLink:hover {
+  transform: scale(1.05);
+}
+
+.camajLink:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.camajLogo {
+  height: 1.9rem;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camajLink {
+    transition: none;
+  }
+}

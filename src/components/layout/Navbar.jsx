@@ -17,15 +17,12 @@ const BARE_ROUTES = ['/login', '/register'];
 const LIENS = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/groups', label: 'Groupes' },
-  { href: '/messages', label: 'Messages' },
   { href: '/community', label: 'Communauté' },
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/wallet', label: 'Portefeuille' },
-  { href: '/recu', label: 'Reçu+' },
   { href: '/tools', label: 'Outils' },
   { href: '/shalom-tv', label: 'Shalom TV' },
-  { href: '/ambassador', label: 'Ambassadeur' },
   { href: '/billing', label: 'Reçu+' },
   { href: '/profile', label: 'Profil' },
 ];
@@ -52,6 +49,9 @@ export const Navbar = () => {
 
   const fermer = () => setMenuOuvert(false);
 
+  // Un lien est actif si l'URL courante correspond à sa route (ou une sous-page).
+  const isActive = (href) => pathname === href || pathname.startsWith(`${href}/`);
+
   return (
     <nav className={`glass ${styles.bar}`}>
       <div className="container">
@@ -64,16 +64,36 @@ export const Navbar = () => {
             <div className={styles.right}>
               {/* Liens bureau */}
               <div className={styles.desktopLinks}>
-                {LIENS.map(({ href, label }) => (
-                  <Link key={href} href={href} className="nav-link" style={{ fontWeight: 'bold' }}>
-                    {label}
-                  </Link>
-                ))}
+                {LIENS.map(({ href, label }) => {
+                  const active = isActive(href);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="nav-link"
+                      aria-current={active ? 'page' : undefined}
+                      style={{
+                        fontWeight: 'bold',
+                        paddingBottom: '2px',
+                        borderBottom: `2px solid ${active ? 'var(--primary)' : 'transparent'}`,
+                        color: active ? 'var(--primary)' : undefined,
+                      }}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
                 {user.is_admin && (
                   <Link
                     href="/admin"
                     className="nav-link flex items-center gap-xs"
-                    style={{ fontWeight: 'bold', color: 'var(--primary)' }}
+                    aria-current={isActive('/admin') ? 'page' : undefined}
+                    style={{
+                      fontWeight: 'bold',
+                      color: 'var(--primary)',
+                      paddingBottom: '2px',
+                      borderBottom: `2px solid ${isActive('/admin') ? 'var(--primary)' : 'transparent'}`,
+                    }}
                     title="Espace administrateur"
                   >
                     <ShieldCheck size={16} /> Admin
@@ -126,11 +146,21 @@ export const Navbar = () => {
             <Link href="/search" className={styles.mobileLink} onClick={fermer}>
               <Search size={18} /> Rechercher
             </Link>
-            {LIENS.map(({ href, label }) => (
-              <Link key={href} href={href} className={styles.mobileLink} onClick={fermer}>
-                {label}
-              </Link>
-            ))}
+            {LIENS.map(({ href, label }) => {
+              const active = isActive(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={styles.mobileLink}
+                  aria-current={active ? 'page' : undefined}
+                  onClick={fermer}
+                  style={active ? { background: 'var(--glass-bg)', color: 'var(--primary)' } : undefined}
+                >
+                  {label}
+                </Link>
+              );
+            })}
             {user.is_admin && (
               <Link
                 href="/admin"
