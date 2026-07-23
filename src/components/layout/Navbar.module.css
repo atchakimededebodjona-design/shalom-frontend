@@ -23,7 +23,9 @@
   font-weight: bold;
   letter-spacing: 0.05em;
   background: var(--gradient-primary);
+  background-clip: text;
   -webkit-background-clip: text;
+  color: transparent;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
   transition: transform 0.3s ease;

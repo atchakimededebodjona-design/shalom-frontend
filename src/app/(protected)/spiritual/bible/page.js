@@ -4,10 +4,17 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, BookOpen } from 'lucide-react';
 import { bibleService } from '../../../../services/bible.service';
+import { getApiError } from '../../../../utils/apiError';
+import { getSelectedVersion, setSelectedVersion } from '../../../../utils/bibleVersion';
 import styles from '../../../../components/shared/panel.module.css';
+
+import pageStyles from './bible.module.css';
 
 export default function BiblePage() {
   const [books, setBooks] = useState([]);
+  const [versions, setVersions] = useState([]);
+  const [versionsError, setVersionsError] = useState('');
+  const [version, setVersion] = useState(getSelectedVersion());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -20,7 +27,15 @@ export default function BiblePage() {
       .then((res) => setBooks(res.data.books || []))
       .catch(() => setError('Impossible de charger la liste des livres.'))
       .finally(() => setLoading(false));
+    bibleService.listVersions()
+      .then((res) => setVersions(res.data.versions || []))
+      .catch((err) => setVersionsError(getApiError(err, 'Erreur inconnue')));
   }, []);
+
+  const handleVersionChange = (code) => {
+    setVersion(code);
+    setSelectedVersion(code);
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -28,7 +43,7 @@ export default function BiblePage() {
     if (q.length < 2) return;
     setSearching(true);
     try {
-      const res = await bibleService.search(q);
+      const res = await bibleService.search(q, version);
       setResults(res.data.results || []);
     } catch {
       setError('La recherche a échoué.');
@@ -41,13 +56,12 @@ export default function BiblePage() {
   const newTestament = books.filter((b) => b.testament === 'nouveau');
 
   const renderBookGrid = (list) => (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-xs)' }}>
+    <div className={pageStyles.bookGrid}>
       {list.map((b) => (
         <Link
           key={b.id}
           href={`/spiritual/bible/${b.id}/1`}
-          className={styles.badge}
-          style={{ padding: '6px 12px', fontSize: '0.85rem', textDecoration: 'none' }}
+          className={pageStyles.bookPill}
         >
           {b.name}
         </Link>
@@ -56,31 +70,47 @@ export default function BiblePage() {
   );
 
   return (
-    <div>
-      <form onSubmit={handleSearch} className={styles.filters}>
-        <input
-          className={styles.input}
-          style={{ flex: 1, minWidth: 200 }}
-          type="text"
-          placeholder="Rechercher un mot, une expression..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button type="submit" className={styles.iconBtn} disabled={searching}>
-          <Search size={20} />
-        </button>
-        {results && (
-          <button type="button" className={styles.iconBtn} onClick={() => { setResults(null); setQuery(''); }}>
-            Effacer
+    <div className="animate-fade-in">
+      {versionsError && <p className={styles.errorMsg}>Versions : {versionsError}</p>}
+      
+      <div className={pageStyles.searchContainer}>
+        <form onSubmit={handleSearch} className={pageStyles.searchForm}>
+          {versions.length > 0 && (
+            <select
+              value={version}
+              onChange={(e) => handleVersionChange(e.target.value)}
+            >
+              {versions.map((v) => <option key={v.code} value={v.code}>{v.name}</option>)}
+            </select>
+          )}
+          <div className={pageStyles.searchInputWrapper}>
+            <Search size={20} className={pageStyles.searchIcon} />
+            <input
+              className={pageStyles.searchInput}
+              type="text"
+              placeholder="Rechercher un mot, une expression..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          <button type="submit" className={pageStyles.searchBtn} disabled={searching}>
+            {searching ? 'Recherche...' : 'Rechercher'}
           </button>
-        )}
-      </form>
+          {results && (
+            <button type="button" className={pageStyles.searchBtn} style={{ background: 'var(--bg-color)', color: 'var(--text-color)', border: '1px solid var(--border-color)' }} onClick={() => { setResults(null); setQuery(''); }}>
+              Effacer
+            </button>
+          )}
+        </form>
+      </div>
 
       {error && <p className={styles.errorMsg}>{error}</p>}
 
       {results ? (
-        <div className={styles.card}>
-          <div className={styles.sectionHead}><h3>Résultats ({results.length})</h3></div>
+        <div className={pageStyles.card}>
+          <div className={pageStyles.sectionHead}>
+            <h3>Résultats ({results.length})</h3>
+          </div>
           {results.length === 0 ? (
             <p className={styles.empty}>Aucun verset trouvé.</p>
           ) : (
@@ -103,15 +133,22 @@ export default function BiblePage() {
           )}
         </div>
       ) : loading ? (
-        <p className={styles.empty}>Chargement...</p>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+           <div className="animate-spin" style={{ width: '40px', height: '40px', border: '4px solid var(--bg-color)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
+        </div>
       ) : (
         <>
-          <div className={styles.card} style={{ marginBottom: 'var(--spacing-md)' }}>
-            <div className={styles.sectionHead}><h3>Ancien Testament</h3></div>
+          <div className={pageStyles.card}>
+            <div className={pageStyles.sectionHead}>
+              <h3>Ancien Testament</h3>
+            </div>
             {renderBookGrid(oldTestament)}
           </div>
-          <div className={styles.card}>
-            <div className={styles.sectionHead}><h3>Nouveau Testament</h3></div>
+          
+          <div className={pageStyles.card}>
+            <div className={pageStyles.sectionHead}>
+              <h3>Nouveau Testament</h3>
+            </div>
             {renderBookGrid(newTestament)}
           </div>
         </>

@@ -3,51 +3,33 @@
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-export const Input = ({ label, type = 'text', id, error, style, ...props }) => {
+export const Input = ({ label, type = 'text', id, error, style, className = '', ...props }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-md)', position: 'relative' }}>
-      {label && <label htmlFor={id} style={{ fontWeight: 'bold', fontSize: 'var(--spacing-sm)' }}>{label}</label>}
-      <div style={{ position: 'relative', width: '100%' }}>
+    <div className={`input-container ${className}`} style={style}>
+      {label && <label htmlFor={id} className="input-label">{label}</label>}
+      <div className="input-wrapper">
         <input
           id={id}
           type={inputType}
-          style={{
-            width: '100%',
-            borderColor: error ? 'red' : 'var(--border-color)',
-            paddingRight: isPassword ? '40px' : undefined,
-            ...style
-          }}
+          className={`input-field ${error ? 'input-error' : ''} ${isPassword ? 'input-password' : ''}`}
           {...props}
         />
         {isPassword && (
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: 'absolute',
-              right: '12px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0
-            }}
+            className="input-password-toggle"
             aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         )}
       </div>
-      {error && <span style={{ color: 'red', fontSize: '12px' }}>{error}</span>}
+      {error && <span className="input-error-text">{error}</span>}
     </div>
   );
 };

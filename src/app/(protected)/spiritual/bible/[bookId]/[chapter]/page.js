@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import { bibleService } from '../../../../../../services/bible.service';
+import { getSelectedVersion, setSelectedVersion } from '../../../../../../utils/bibleVersion';
 import styles from '../../../../../../components/shared/panel.module.css';
 
 export default function BibleChapterPage() {
@@ -14,24 +15,32 @@ export default function BibleChapterPage() {
   const chapterNumber = parseInt(params.chapter, 10);
 
   const [books, setBooks] = useState([]);
+  const [versions, setVersions] = useState([]);
+  const [version, setVersion] = useState(getSelectedVersion());
   const [chapterData, setChapterData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     bibleService.listBooks().then((res) => setBooks(res.data.books || [])).catch(() => {});
+    bibleService.listVersions().then((res) => setVersions(res.data.versions || [])).catch(() => {});
   }, []);
+
+  const handleVersionChange = (code) => {
+    setVersion(code);
+    setSelectedVersion(code);
+  };
 
   useEffect(() => {
     let active = true;
     setLoading(true);
     setError('');
-    bibleService.getChapter(bookId, chapterNumber)
+    bibleService.getChapter(bookId, chapterNumber, version)
       .then((res) => { if (active) setChapterData(res.data); })
       .catch(() => { if (active) setError('Chapitre introuvable.'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [bookId, chapterNumber]);
+  }, [bookId, chapterNumber, version]);
 
   useEffect(() => {
     if (!chapterData || typeof window === 'undefined' || !window.location.hash) return;
@@ -70,6 +79,16 @@ export default function BibleChapterPage() {
       </Link>
 
       <div className={styles.filters}>
+        {versions.length > 0 && (
+          <select
+            className={styles.select}
+            style={{ width: 140 }}
+            value={version}
+            onChange={(e) => handleVersionChange(e.target.value)}
+          >
+            {versions.map((v) => <option key={v.code} value={v.code}>{v.name}</option>)}
+          </select>
+        )}
         <select
           className={styles.select}
           style={{ flex: 1, minWidth: 160 }}
