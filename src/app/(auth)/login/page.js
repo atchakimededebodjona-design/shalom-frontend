@@ -30,7 +30,7 @@ export default function Login() {
   return (
     <div className="animate-fade-in" style={{ width: '100%' }}>
       <AuthLogo />
-      <h1 className="text-center mb-xs mt-md">Bon retour</h1>
+      <h1 className="text-center mb-xs mt-md" style={{ color: '#F8FAFC' }}>Bon retour</h1>
       <p className="text-center mb-xl text-muted">Connectez-vous pour continuer</p>
 
       {error && <div className="alert-error">{error}</div>}
