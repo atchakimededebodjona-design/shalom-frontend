@@ -8,7 +8,7 @@ import { messagesService } from '../../../services/messages.service';
 import { getApiError } from '../../../utils/apiError';
 import { ConversationRow } from '../../../components/messages/ConversationRow';
 import { Button } from '../../../components/ui/Button';
-import { BackButton } from '../../../components/ui/BackButton';
+import { PageHeader } from '../../../components/ui/PageHeader';
 
 const PAGE_SIZE = 20;
 
@@ -71,11 +71,12 @@ export default function MessagesInboxPage() {
 
   return (
     <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) 0', maxWidth: '700px' }}>
-      <div className="mb-md"><BackButton fallbackHref="/dashboard" /></div>
-
-      <h1 className="text-primary mb-lg flex items-center gap-sm">
-        <Inbox size={26} /> Messages
-      </h1>
+      <PageHeader 
+        title="Messages" 
+        description="Vos conversations privées."
+        showBack={true}
+        fallbackHref="/dashboard"
+      />
 
       {loading ? (
         <div className="glass p-lg text-center text-muted animate-pulse" style={{ borderRadius: 'var(--radius-md)' }}>

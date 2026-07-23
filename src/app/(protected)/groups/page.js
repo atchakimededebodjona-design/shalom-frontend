@@ -10,7 +10,7 @@ import { GroupCard } from '../../../components/groups/GroupCard';
 import { CreateGroupForm } from '../../../components/groups/CreateGroupForm';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
-import { BackButton } from '../../../components/ui/BackButton';
+import { PageHeader } from '../../../components/ui/PageHeader';
 
 const PAGE_SIZE = 12;
 
@@ -98,16 +98,17 @@ export default function GroupsPage() {
 
   return (
     <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) 0' }}>
-      <div className="mb-md">
-        <BackButton fallbackHref="/dashboard" />
-      </div>
-
-      <div className="flex items-center justify-between gap-md mb-lg" style={{ flexWrap: 'wrap' }}>
-        <h1 className="text-primary" style={{ margin: 0 }}>Groupes</h1>
-        <Button variant="primary" onClick={() => setShowCreate(true)}>
-          <span className="flex items-center gap-xs"><Plus size={18} /> Créer un groupe</span>
-        </Button>
-      </div>
+      <PageHeader 
+        title="Groupes" 
+        description="Découvrez et rejoignez des groupes qui partagent vos intérêts."
+        showBack={true}
+        fallbackHref="/dashboard"
+        actions={
+          <Button variant="primary" onClick={() => setShowCreate(true)}>
+            <span className="flex items-center gap-xs"><Plus size={18} /> Créer un groupe</span>
+          </Button>
+        }
+      />
 
       <form onSubmit={handleSearch} className="flex gap-sm items-center mb-lg">
         <div style={{ position: 'relative', flex: 1 }}>

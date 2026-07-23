@@ -12,34 +12,35 @@ export const GroupCard = ({ group }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: 'var(--radius-md)',
+        borderRadius: 'var(--radius-xl)',
         overflow: 'hidden',
         color: 'inherit',
         textDecoration: 'none',
+        boxShadow: 'var(--shadow-md)',
       }}
     >
       <div
         style={{
-          height: '90px',
+          height: '110px',
           background: group.cover_url
             ? `center / cover no-repeat url(${group.cover_url})`
-            : 'linear-gradient(120deg, var(--primary), var(--secondary))',
+            : 'var(--gradient-primary)',
         }}
       />
-      <div className="p-md flex-col gap-xs" style={{ flex: 1 }}>
+      <div className="p-lg flex-col gap-sm" style={{ flex: 1, display: 'flex' }}>
         <div className="flex items-center justify-between gap-sm">
-          <h3 style={{ margin: 0, fontSize: '1.05rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <h3 style={{ margin: 0, fontSize: '1.2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'var(--font-heading)' }}>
             {group.name}
           </h3>
           <span
-            className="text-sm"
+            className="text-sm font-bold"
             style={{
               flexShrink: 0,
-              backgroundColor: 'var(--bg-color-alt)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-muted)',
-              padding: '0.1rem 0.5rem',
+              backgroundColor: 'var(--primary)',
+              color: 'var(--on-primary)',
+              padding: '0.25rem 0.75rem',
               borderRadius: 'var(--radius-full)',
+              fontSize: '0.75rem'
             }}
           >
             {VISIBILITY_LABELS[group.visibility] || group.visibility}
@@ -54,14 +55,15 @@ export const GroupCard = ({ group }) => {
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
+              lineHeight: 1.5,
             }}
           >
             {group.description}
           </p>
         )}
-        <div className="flex items-center gap-xs text-muted text-sm" style={{ marginTop: 'auto', paddingTop: 'var(--spacing-xs)' }}>
-          <Users size={15} />
-          <span>{group.members_count} membre{group.members_count > 1 ? 's' : ''}</span>
+        <div className="flex items-center gap-xs text-muted text-sm" style={{ marginTop: 'auto', paddingTop: 'var(--spacing-sm)', borderTop: '1px solid var(--border-color)' }}>
+          <Users size={16} color="var(--primary)" />
+          <span style={{ fontWeight: 600 }}>{group.members_count} membre{group.members_count > 1 ? 's' : ''}</span>
         </div>
       </div>
     </Link>

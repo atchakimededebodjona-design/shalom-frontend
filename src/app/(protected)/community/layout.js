@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Users } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
-import { BackButton } from '../../../components/ui/BackButton';
+import { PageHeader } from '../../../components/ui/PageHeader';
 import styles from '../../../components/shared/panel.module.css';
 
 const TABS = [
@@ -34,10 +34,12 @@ export default function CommunityLayout({ children }) {
 
   return (
     <div className={`container animate-fade-in ${styles.theme}`} style={{ padding: 'var(--spacing-xl) 0' }}>
-      <div className="mb-md"><BackButton fallbackHref="/dashboard" /></div>
-      <h1 className="text-primary flex items-center gap-sm mb-md">
-        <Users size={26} /> Communauté
-      </h1>
+      <PageHeader 
+        title="Communauté" 
+        description="Connectez-vous avec vos frères et sœurs en Christ."
+        showBack={true}
+        fallbackHref="/dashboard"
+      />
       <nav className={styles.tabs}>
         {TABS.map((t) => {
           const active = t.href === '/community' ? pathname === '/community' : pathname.startsWith(t.href);

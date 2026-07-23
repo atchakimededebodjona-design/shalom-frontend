@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Search, MapPin, CalendarClock, Users2 } from 'lucide-react';
 import { communityService } from '../../../services/community.service';
 import styles from '../../../components/shared/panel.module.css';
+import { ModernCard } from '../../../components/ui/ModernCard';
 
 const CATEGORIES = [
   { v: '', l: 'Toutes' },
@@ -86,9 +87,9 @@ export default function DirectoryPage() {
       ) : (
         <div className={styles.grid}>
           {groups.map((g) => (
-            <div key={g.id} className={styles.card}>
+            <ModernCard key={g.id} className="hover-lift" style={{ padding: 'var(--spacing-lg)', display: 'flex', flexDirection: 'column' }}>
               <div className={styles.sectionHead}>
-                <h3 style={{ fontSize: '1.05rem' }}>{g.name}</h3>
+                <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-heading)', margin: 0 }}>{g.name}</h3>
                 {g.group_category && <span className={styles.badgePrimary}>{CAT_LABEL[g.group_category]}</span>}
               </div>
               {g.description && (
@@ -96,17 +97,17 @@ export default function DirectoryPage() {
               )}
               <div className="flex-col gap-xs text-sm text-muted" style={{ display: 'flex' }}>
                 {g.meeting_schedule && (
-                  <span className="flex items-center gap-xs"><CalendarClock size={14} /> {g.meeting_schedule}</span>
+                  <span className="flex items-center gap-xs"><CalendarClock size={16} color="var(--primary)" /> {g.meeting_schedule}</span>
                 )}
                 {g.location_info && (
-                  <span className="flex items-center gap-xs"><MapPin size={14} /> {g.location_info}</span>
+                  <span className="flex items-center gap-xs"><MapPin size={16} color="var(--primary)" /> {g.location_info}</span>
                 )}
-                <span className="flex items-center gap-xs"><Users2 size={14} /> {g.members_count} membre(s)</span>
+                <span className="flex items-center gap-xs"><Users2 size={16} color="var(--primary)" /> <span style={{ fontWeight: 600 }}>{g.members_count} membre(s)</span></span>
               </div>
-              <div className={styles.actions} style={{ marginTop: 'var(--spacing-md)' }}>
-                <Link href={`/groups/${g.id}`} className="text-sm text-primary font-bold">Voir le groupe →</Link>
+              <div className={styles.actions} style={{ marginTop: 'auto', paddingTop: 'var(--spacing-md)' }}>
+                <Link href={`/groups/${g.id}`} className="btn-primary" style={{ width: '100%', textAlign: 'center', display: 'block', padding: '0.5rem' }}>Voir le groupe</Link>
               </div>
-            </div>
+            </ModernCard>
           ))}
         </div>
       )}

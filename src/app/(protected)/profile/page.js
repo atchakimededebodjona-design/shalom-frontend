@@ -10,7 +10,7 @@ import { ProfileEditForm } from '../../../components/profile/ProfileEditForm';
 import { FollowList } from '../../../components/follows/FollowList';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
-import { BackButton } from '../../../components/ui/BackButton';
+import { PageHeader } from '../../../components/ui/PageHeader';
 
 export default function Profile() {
   const { user, loading, refreshUser } = useAuth();
@@ -64,9 +64,12 @@ export default function Profile() {
 
   return (
     <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) 0' }}>
-      <div className="mb-md">
-        <BackButton fallbackHref="/dashboard" />
-      </div>
+      <PageHeader 
+        title="Mon Profil" 
+        description="Gérez vos informations personnelles et vos statistiques"
+        showBack={true}
+        fallbackHref="/dashboard"
+      />
 
       <ProfileView
         profile={user}
