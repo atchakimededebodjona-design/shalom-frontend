@@ -1,10 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { authService } from '../services/auth.service';
-import { setTokens, clearTokens } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -14,16 +12,15 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
+    // Les tokens vivent dans des cookies httpOnly : impossible (et inutile)
+    // de vérifier leur présence en JS. On demande directement le profil ;
+    // un 401 signifie simplement "non connecté".
     const initAuth = async () => {
-      const token = Cookies.get('token');
-      if (token) {
-        try {
-          const res = await authService.getMe();
-          setUser(res.data.profile);
-        } catch (error) {
-          clearTokens();
-          setUser(null);
-        }
+      try {
+        const res = await authService.getMe();
+        setUser(res.data.profile);
+      } catch (error) {
+        setUser(null);
       }
       setLoading(false);
     };
@@ -32,8 +29,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const res = await authService.login(email, password);
-    setTokens(res.data.tokens); // access_token + refresh_token
+    // Le backend pose les cookies httpOnly access_token/refresh_token —
+    // rien à stocker côté client.
+    await authService.login(email, password);
 
     // Fetch profile
     const profileRes = await authService.getMe();
@@ -42,8 +40,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
-    const res = await authService.register(userData);
-    setTokens(res.data.tokens);
+    await authService.register(userData);
 
     // Fetch profile
     const profileRes = await authService.getMe();
@@ -51,10 +48,13 @@ export const AuthProvider = ({ children }) => {
     router.push('/dashboard');
   };
 
-  const logout = () => {
-    clearTokens();
-    setUser(null);
-    router.push('/login');
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } finally {
+      setUser(null);
+      router.push('/login');
+    }
   };
 
   // Re-synchronise le profil courant (ex: après une édition de profil)

@@ -14,5 +14,10 @@ export const authService = {
   getMe: async () => {
     const response = await api.get('/profiles/me');
     return response.data;
-  }
+  },
+
+  logout: async () => {
+    const response = await api.post('/auth/logout');
+    return response.data;
+  },
 };

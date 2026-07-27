@@ -1,51 +1,27 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
+// withCredentials : les cookies httpOnly access_token/refresh_token posés par
+// le backend (voir auth.controller.js) doivent être envoyés automatiquement
+// par le navigateur — l'app ne les lit/gère plus jamais elle-même en JS.
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// --- Gestion centralisée des tokens (cookies) ---
-export const setTokens = ({ access_token, refresh_token } = {}) => {
-  if (access_token) Cookies.set('token', access_token, { expires: 7 });
-  if (refresh_token) Cookies.set('refresh_token', refresh_token, { expires: 7 });
-};
-
-export const clearTokens = () => {
-  Cookies.remove('token');
-  Cookies.remove('refresh_token');
-};
-
-// Interceptor requête : ajoute le token JWT à chaque appel
-api.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
 // --- Rafraîchissement automatique du token sur 401 ---
 // Une seule requête de refresh partagée entre tous les appels concurrents.
+// Le refresh_token httpOnly est envoyé automatiquement par le navigateur ;
+// la réponse pose les nouveaux cookies via Set-Cookie, rien à stocker ici.
 let refreshPromise = null;
 
 const refreshAccessToken = async () => {
-  const refresh_token = Cookies.get('refresh_token');
-  if (!refresh_token) throw new Error('NO_REFRESH_TOKEN');
-
   // axios "nu" pour éviter la récursion des intercepteurs
-  const resp = await axios.post(`${API_URL}/auth/refresh`, { refresh_token });
-  const tokens = resp.data.data.tokens; // rotation : nouveaux access + refresh
-  setTokens(tokens);
-  return tokens.access_token;
+  await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
 };
 
 api.interceptors.response.use(
@@ -56,7 +32,7 @@ api.interceptors.response.use(
     const isAuthEndpoint = original?.url?.includes('/auth/');
 
     // 401 sur une route protégée → on tente un refresh une seule fois
-    if (status === 401 && original && !original._retry && !isAuthEndpoint && Cookies.get('refresh_token')) {
+    if (status === 401 && original && !original._retry && !isAuthEndpoint) {
       original._retry = true;
       try {
         if (!refreshPromise) {
@@ -64,13 +40,10 @@ api.interceptors.response.use(
             refreshPromise = null;
           });
         }
-        const newToken = await refreshPromise;
-        original.headers = original.headers || {};
-        original.headers.Authorization = `Bearer ${newToken}`;
-        return api(original); // rejoue la requête d'origine
+        await refreshPromise;
+        return api(original); // rejoue la requête d'origine (nouveau cookie déjà posé)
       } catch (refreshErr) {
         // Refresh impossible → session terminée
-        clearTokens();
         if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
           window.location.href = '/login';
         }
