@@ -14,7 +14,6 @@ const TABS = [
   { href: '/spiritual/bible', label: 'La Bible' },
   { href: '/spiritual/prayers', label: 'Prière' },
   { href: '/spiritual/journal', label: 'Journal' },
-  { href: '/spiritual/worship', label: 'Louange' },
 ];
 
 export default function SpiritualLayout({ children }) {
