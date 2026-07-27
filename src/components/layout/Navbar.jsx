@@ -20,6 +20,7 @@ const LIENS = [
   { href: '/spiritual', label: 'Spirituel' },
   { href: '/finance', label: 'Finances' },
   { href: '/wallet', label: 'Portefeuille' },
+  { href: '/games', label: 'Jeux' },
   { href: '/tools', label: 'Outils' },
   { href: '/shalom-tv', label: 'Shalom TV' },
   { href: '/profile', label: 'Profil' },
