@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Gamepad2, Play } from 'lucide-react';
+import { Gamepad2, Play, Sparkles, Loader2, Trophy } from 'lucide-react';
 import { gamesService } from '../../../services/games.service';
 import { ModernCard } from '../../../components/ui/ModernCard';
-import styles from '../../../components/shared/panel.module.css';
+import styles from './games.module.css';
 
 export default function GamesPage() {
   const [games, setGames] = useState([]);
@@ -27,43 +27,70 @@ export default function GamesPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <p className="animate-pulse text-muted">Chargement…</p>;
-  if (error) return <p className={styles.errorMsg} role="alert">{error}</p>;
-
-  if (games.length === 0) {
-    return (
-      <div className={`${styles.card} ${styles.empty}`}>
-        <Gamepad2 size={28} style={{ opacity: 0.5 }} />
-        <p>Aucun jeu disponible pour le moment.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.grid}>
-      {games.map((g) => (
-        <ModernCard
-          key={g.id}
-          className="hover-lift"
-          style={{ padding: 'var(--spacing-lg)', display: 'flex', flexDirection: 'column' }}
-        >
-          <div className={styles.sectionHead}>
-            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-heading)', margin: 0 }}>{g.name}</h3>
-          </div>
-          {g.description && (
-            <p className="text-sm text-muted" style={{ marginTop: 0 }}>{g.description}</p>
-          )}
-          <div className={styles.actions} style={{ marginTop: 'auto', paddingTop: 'var(--spacing-md)' }}>
-            <Link
-              href={`/games/play/${g.id}`}
-              className="btn-primary flex items-center justify-center gap-xs"
-              style={{ width: '100%', textAlign: 'center', padding: '0.5rem', borderRadius: 'var(--radius-md)' }}
+    <div className={styles.container}>
+      <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>
+          <Gamepad2 size={40} />
+          Espace Jeux
+          <Sparkles size={32} style={{ color: 'var(--color-accent)' }} />
+        </h1>
+        <p className={styles.heroSubtitle}>
+          Détendez-vous, apprenez et amusez-vous avec notre sélection de jeux pensés pour vous.
+        </p>
+      </div>
+
+      {loading && (
+        <div className={styles.loadingState}>
+          <Loader2 size={48} className="animate-spin" />
+          <p>Chargement des jeux...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="error-card" role="alert">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {!loading && !error && games.length === 0 && (
+        <div className={styles.emptyState}>
+          <Trophy size={64} style={{ opacity: 0.5, color: 'var(--text-secondary)' }} />
+          <h2>Aucun jeu disponible</h2>
+          <p>De nouveaux jeux seront ajoutés très bientôt !</p>
+        </div>
+      )}
+
+      {!loading && !error && games.length > 0 && (
+        <div className={styles.grid}>
+          {games.map((g) => (
+            <ModernCard
+              key={g.id}
+              className={`${styles.card} hover-lift`}
+              style={{ padding: '0', overflow: 'hidden' }}
             >
-              <Play size={16} /> Jouer
-            </Link>
-          </div>
-        </ModernCard>
-      ))}
+              <div style={{ padding: 'var(--spacing-lg)', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div className={styles.cardContent}>
+                  <div className={styles.cardIconWrapper}>
+                    <Gamepad2 size={32} />
+                  </div>
+                  <h3 className={styles.cardTitle}>{g.name}</h3>
+                  {g.description && (
+                    <p className={styles.cardDescription}>{g.description}</p>
+                  )}
+                </div>
+                
+                <div className={styles.cardFooter}>
+                  <Link href={`/games/play/${g.id}`} className={styles.playButton}>
+                    <Play size={20} fill="currentColor" />
+                    Jouer maintenant
+                  </Link>
+                </div>
+              </div>
+            </ModernCard>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
