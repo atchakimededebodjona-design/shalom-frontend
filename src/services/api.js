@@ -19,9 +19,27 @@ const api = axios.create({
 // la réponse pose les nouveaux cookies via Set-Cookie, rien à stocker ici.
 let refreshPromise = null;
 
+// Coupure réseau/serveur brève (ex: redémarrage du serveur dev) : quelques
+// tentatives avant d'abandonner, pour ne pas déconnecter l'utilisateur pour
+// un simple aléa transitoire. Un vrai rejet (401 : token invalide/expiré/
+// révoqué) échoue immédiatement — le retenter ne changerait rien.
+const REFRESH_RETRY_DELAYS_MS = [500, 1000];
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const refreshAccessToken = async () => {
   // axios "nu" pour éviter la récursion des intercepteurs
-  await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
+  let lastErr;
+  for (let attempt = 0; attempt <= REFRESH_RETRY_DELAYS_MS.length; attempt++) {
+    try {
+      await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
+      return;
+    } catch (err) {
+      lastErr = err;
+      if (err.response?.status === 401) throw err;
+      if (attempt < REFRESH_RETRY_DELAYS_MS.length) await sleep(REFRESH_RETRY_DELAYS_MS[attempt]);
+    }
+  }
+  throw lastErr;
 };
 
 api.interceptors.response.use(
@@ -43,8 +61,13 @@ api.interceptors.response.use(
         await refreshPromise;
         return api(original); // rejoue la requête d'origine (nouveau cookie déjà posé)
       } catch (refreshErr) {
-        // Refresh impossible → session terminée
-        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+        // Ne déconnecter que si le serveur a explicitement rejeté le refresh
+        // token (401 : expiré/révoqué/invalide) — pas sur une erreur réseau
+        // ou serveur transitoire (pas de réponse, 5xx), qui ne remet pas en
+        // cause la session : on laisse simplement cette requête échouer, la
+        // prochaine action de l'utilisateur retentera le refresh normalement.
+        const isGenuineAuthFailure = refreshErr.response?.status === 401;
+        if (isGenuineAuthFailure && typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
           window.location.href = '/login';
         }
         return Promise.reject(refreshErr);
