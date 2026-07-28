@@ -1,6 +1,6 @@
 // Origines des médias servis par le backend (avatars, posts, jeux...) — voir
 // resolveMediaUrl.js. À compléter avec le domaine réel lors du déploiement.
-const BACKEND_ORIGINS = ['http://localhost:5000', 'http://192.168.1.84:5000'];
+const BACKEND_ORIGINS = ['http://localhost:5000', 'http://192.168.1.73:5000'];
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -16,7 +16,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: https://res.cloudinary.com ${BACKEND_ORIGINS.join(' ')}`,
   `media-src 'self' blob: ${BACKEND_ORIGINS.join(' ')}`,
-  `connect-src 'self' ${BACKEND_ORIGINS.join(' ')} ws://localhost:3000 ws://192.168.1.84:3000`,
+  `connect-src 'self' ${BACKEND_ORIGINS.join(' ')} ws://localhost:3000 ws://192.168.1.73:3000`,
   "font-src 'self' data:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -28,7 +28,7 @@ const CSP = [
 const nextConfig = {
   reactStrictMode: true,
   // Autorise l'accès en dev depuis un autre appareil du réseau local (ex: test mobile)
-  allowedDevOrigins: ['192.168.1.84'],
+  allowedDevOrigins: ['192.168.1.73'],
   images: {
     // Hôtes explicites uniquement (pas de wildcard '**') : le endpoint
     // d'optimisation d'image de Next.js (/_next/image?url=...) proxie ce
@@ -36,7 +36,7 @@ const nextConfig = {
     // interne une fois le site en ligne.
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost', port: '5000' },
-      { protocol: 'http', hostname: '192.168.1.84', port: '5000' },
+      { protocol: 'http', hostname: '192.168.1.73', port: '5000' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
   },
