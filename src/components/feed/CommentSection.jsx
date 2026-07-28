@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Send, Trash2 } from 'lucide-react';
+import { Send, Trash2, BadgeCheck, Star } from 'lucide-react';
 import { commentsService } from '../../services/comments.service';
 import { getApiError } from '../../utils/apiError';
 import { timeAgo } from '../../utils/date';
@@ -55,6 +55,7 @@ export const CommentSection = ({ postId, currentUser, onCountChange }) => {
               display_name: currentUser?.display_name,
               avatar_url: currentUser?.avatar_url,
               is_verified: currentUser?.is_verified,
+              is_ambassador: currentUser?.is_ambassador,
             },
           };
       setComments((prev) => [...prev, enriched]); // ordre chronologique (asc)
@@ -105,7 +106,11 @@ export const CommentSection = ({ postId, currentUser, onCountChange }) => {
                     }}
                   >
                     <div className="flex items-center justify-between gap-sm">
-                      <span className="font-bold text-sm">{author.display_name || 'Utilisateur'}</span>
+                      <div className="flex items-center gap-xs">
+                        <span className="font-bold text-sm">{author.display_name || 'Utilisateur'}</span>
+                        {author.is_verified && <BadgeCheck size={14} color="var(--secondary)" aria-label="Vérifié" />}
+                        {author.is_ambassador && <Star size={14} color="var(--primary)" fill="var(--secondary)" className="animate-twinkle" aria-label="Ambassadeur certifié" />}
+                      </div>
                       <span className="flex items-center gap-sm">
                         <span className="text-muted text-sm">{timeAgo(comment.created_at)}</span>
                         {canDelete && (

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, MessageCircle, Trash2, BadgeCheck } from 'lucide-react';
+import { Heart, MessageCircle, Trash2, BadgeCheck, Star } from 'lucide-react';
 import { postsService } from '../../services/posts.service';
 import { likesService } from '../../services/likes.service';
 import { getApiError } from '../../utils/apiError';
@@ -97,6 +97,7 @@ export const PostCard = ({ post, currentUser, onDeleted }) => {
                 {author.display_name || 'Utilisateur'}
               </span>
               {author.is_verified && <BadgeCheck size={16} color="var(--secondary)" aria-label="Vérifié" />}
+              {author.is_ambassador && <Star size={16} color="var(--primary)" fill="var(--secondary)" className="animate-twinkle" aria-label="Ambassadeur certifié" />}
             </div>
             <span className="text-muted text-sm">{timeAgo(post.created_at)}</span>
           </div>
