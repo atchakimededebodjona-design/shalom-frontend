@@ -248,7 +248,7 @@ export const ProfileView = ({
         <div className="flex items-center gap-sm" style={{ marginTop: 'var(--spacing-md)' }}>
           <h1 style={{ margin: 0, fontSize: '1.75rem', color: 'var(--secondary)' }}>{profile.display_name}</h1>
           {profile.is_verified && <BadgeCheck size={24} color="var(--primary)" aria-label="Vérifié" />}
-          {profile.is_ambassador && <Star size={22} color="var(--primary)" aria-label="Ambassadeur" />}
+          {profile.is_ambassador && <Star size={22} color="var(--primary)" fill="var(--secondary)" className="animate-twinkle" aria-label="Ambassadeur certifié" />}
         </div>
 
         {email && <p className="text-muted text-md" style={{ marginTop: 'var(--spacing-xs)' }}>{email}</p>}
