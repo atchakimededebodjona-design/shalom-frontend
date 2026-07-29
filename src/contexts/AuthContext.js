@@ -40,9 +40,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
-    await authService.register(userData);
+    // L'inscription n'émet plus de session : un code de vérification est
+    // envoyé par email, il faut le confirmer via verifyEmail() avant de
+    // pouvoir se connecter.
+    const res = await authService.register(userData);
+    router.push(`/verify-email?email=${encodeURIComponent(userData.email)}`);
+    return res;
+  };
 
-    // Fetch profile
+  const verifyEmail = async (email, code) => {
+    await authService.verifyEmail({ email, code });
+
+    // Le backend a posé les cookies httpOnly : connexion automatique.
     const profileRes = await authService.getMe();
     setUser(profileRes.data.profile);
     router.push('/dashboard');
@@ -65,7 +74,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, verifyEmail, logout, refreshUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );

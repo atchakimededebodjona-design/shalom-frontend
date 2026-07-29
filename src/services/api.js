@@ -2,6 +2,13 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
+// Pages publiques : un visiteur non connecté y déclenche un 401 normal (ex:
+// AuthContext.initAuth() qui vérifie "suis-je connecté ?" au montage), ça ne
+// doit jamais provoquer de redirection — il y est déjà légitimement.
+const PUBLIC_PATHS = ['/login', '/register', '/verify-email'];
+const isOnPublicPath = () =>
+  typeof window !== 'undefined' && PUBLIC_PATHS.some((p) => window.location.pathname.startsWith(p));
+
 // withCredentials : les cookies httpOnly access_token/refresh_token posés par
 // le backend (voir auth.controller.js) doivent être envoyés automatiquement
 // par le navigateur — l'app ne les lit/gère plus jamais elle-même en JS.
@@ -67,7 +74,7 @@ api.interceptors.response.use(
         // cause la session : on laisse simplement cette requête échouer, la
         // prochaine action de l'utilisateur retentera le refresh normalement.
         const isGenuineAuthFailure = refreshErr.response?.status === 401;
-        if (isGenuineAuthFailure && typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+        if (isGenuineAuthFailure && !isOnPublicPath()) {
           window.location.href = '/login';
         }
         return Promise.reject(refreshErr);

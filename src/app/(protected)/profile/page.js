@@ -7,6 +7,7 @@ import { followsService } from '../../../services/follows.service';
 import { profilesService } from '../../../services/profiles.service';
 import { ProfileView } from '../../../components/profile/ProfileView';
 import { ProfileEditForm } from '../../../components/profile/ProfileEditForm';
+import { ChangePasswordForm } from '../../../components/profile/ChangePasswordForm';
 import { FollowList } from '../../../components/follows/FollowList';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
@@ -85,8 +86,11 @@ export default function Profile() {
             <Button variant="secondary" onClick={() => setModal('edit')}>
               Modifier le profil
             </Button>
-            <Button 
-              variant={user.is_ambassador ? 'primary' : 'secondary'} 
+            <Button variant="secondary" onClick={() => setModal('password')}>
+              Changer le mot de passe
+            </Button>
+            <Button
+              variant={user.is_ambassador ? 'primary' : 'secondary'}
               onClick={() => router.push('/ambassador')}
               style={user.is_ambassador ? {} : { background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)' }}
             >
@@ -106,6 +110,10 @@ export default function Profile() {
 
       <Modal isOpen={modal === 'edit'} onClose={() => setModal(null)} title="Modifier le profil" maxWidth="560px">
         <ProfileEditForm profile={user} onSaved={handleSaved} onCancel={() => setModal(null)} />
+      </Modal>
+
+      <Modal isOpen={modal === 'password'} onClose={() => setModal(null)} title="Changer le mot de passe" maxWidth="480px">
+        <ChangePasswordForm onSaved={() => setModal(null)} onCancel={() => setModal(null)} />
       </Modal>
     </div>
   );

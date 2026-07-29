@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
@@ -10,18 +11,24 @@ import Link from 'next/link';
 
 export default function Login() {
   const { login } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [needsVerification, setNeedsVerification] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setNeedsVerification(false);
     setLoading(true);
     try {
       await login(email, password);
     } catch (err) {
+      if (err.response?.data?.code === 'EMAIL_NOT_VERIFIED') {
+        setNeedsVerification(true);
+      }
       setError(getApiError(err, 'Erreur lors de la connexion'));
       setLoading(false);
     }
@@ -34,6 +41,16 @@ export default function Login() {
       <p className="text-center mb-xl text-muted">Connectez-vous pour continuer</p>
 
       {error && <div className="alert-error">{error}</div>}
+      {needsVerification && (
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => router.push(`/verify-email?email=${encodeURIComponent(email)}`)}
+          style={{ width: '100%', marginBottom: 'var(--spacing-md)' }}
+        >
+          Vérifier mon email
+        </Button>
+      )}
 
       <form onSubmit={handleSubmit} className="flex-col gap-md">
         <Input

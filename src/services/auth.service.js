@@ -20,4 +20,19 @@ export const authService = {
     const response = await api.post('/auth/logout');
     return response.data;
   },
+
+  changePassword: async ({ current_password, new_password }) => {
+    const response = await api.patch('/auth/password', { current_password, new_password });
+    return response.data;
+  },
+
+  verifyEmail: async ({ email, code }) => {
+    const response = await api.post('/auth/verify-email', { email, code });
+    return response.data;
+  },
+
+  resendVerification: async ({ email }) => {
+    const response = await api.post('/auth/resend-verification', { email });
+    return response.data;
+  },
 };
