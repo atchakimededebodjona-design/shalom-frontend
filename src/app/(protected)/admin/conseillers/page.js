@@ -8,9 +8,11 @@ import { conseillersService } from '../../../../services/conseillers.service';
 import { getApiError } from '../../../../utils/apiError';
 import { BackButton } from '../../../../components/ui/BackButton';
 import { Button } from '../../../../components/ui/Button';
+import { Avatar } from '../../../../components/ui/Avatar';
+import { MemberPicker } from './MemberPicker';
 import styles from './conseillers.module.css';
 
-const emptyForm = { nom: '', email: '', telephone: '', specialite: '', bio: '', is_active: true };
+const emptyForm = { selectedMember: null, telephone: '', specialite: '', bio: '', is_active: true };
 
 export default function AdminConseillersPage() {
   const { user, loading } = useAuth();
@@ -59,8 +61,9 @@ export default function AdminConseillersPage() {
   const editConseiller = (c) => {
     setEditingId(c.id);
     setForm({
-      nom: c.nom,
-      email: c.email || '',
+      // Le membre désigné ne se change pas depuis l'édition (cf. backend) —
+      // affiché à titre indicatif, non modifiable.
+      selectedMember: { user_id: c.user_id, display_name: c.nom, avatar_url: c.avatar_url },
       telephone: c.telephone || '',
       specialite: c.specialite || '',
       bio: c.bio || '',
@@ -72,18 +75,23 @@ export default function AdminConseillersPage() {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!editingId && !form.selectedMember) {
+      setError('Sélectionnez un membre à désigner comme conseiller.');
+      return;
+    }
     setSaving(true);
     try {
       const payload = {
-        nom: form.nom,
-        email: form.email || null,
         telephone: form.telephone || null,
         specialite: form.specialite || null,
         bio: form.bio || null,
         is_active: !!form.is_active,
       };
-      if (editingId) await conseillersService.update(editingId, payload);
-      else await conseillersService.create(payload);
+      if (editingId) {
+        await conseillersService.update(editingId, payload);
+      } else {
+        await conseillersService.create({ ...payload, user_id: form.selectedMember.user_id });
+      }
       resetForm();
       await load();
     } catch (err) {
@@ -104,7 +112,7 @@ export default function AdminConseillersPage() {
   };
 
   const remove = async (c) => {
-    if (!window.confirm(`Supprimer le conseiller « ${c.nom} » ?`)) return;
+    if (!window.confirm(`Retirer « ${c.nom} » de la liste des conseillers ?`)) return;
     setError('');
     try {
       await conseillersService.remove(c.id);
@@ -121,27 +129,28 @@ export default function AdminConseillersPage() {
       <h1 className="text-primary flex items-center gap-sm mb-sm">
         <Users size={26} /> Conseillers en accompagnement
       </h1>
-      <p className="text-muted mb-lg">Annuaire interne des conseillers disponibles pour l&apos;accompagnement des membres.</p>
+      <p className="text-muted mb-lg">
+        Désignez des membres SHALOM déjà inscrits comme conseillers certifiés, disponibles pour
+        l&apos;accompagnement des membres.
+      </p>
 
       <div className={styles.grid}>
         {/* Formulaire création / édition */}
         <div className={styles.card}>
-          <h3>{editingId ? 'Modifier le conseiller' : 'Nouveau conseiller'}</h3>
+          <h3>{editingId ? 'Modifier le conseiller' : 'Désigner un conseiller'}</h3>
           <form className={styles.form} onSubmit={submit}>
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="nom">Nom *</label>
-              <input id="nom" className={styles.input} value={form.nom} onChange={set('nom')} required maxLength={150} />
+              <label className={styles.label}>Membre {editingId ? '' : '*'}</label>
+              <MemberPicker
+                selected={form.selectedMember}
+                onSelect={(p) => setForm({ ...form, selectedMember: p })}
+              />
+              {editingId && <p className="text-muted text-sm" style={{ margin: 0 }}>Le membre désigné ne peut pas être changé — supprimez puis recréez si besoin.</p>}
             </div>
 
-            <div className={styles.row}>
-              <div className={styles.field} style={{ flex: 1 }}>
-                <label className={styles.label} htmlFor="email">E-mail</label>
-                <input id="email" type="email" className={styles.input} value={form.email} onChange={set('email')} />
-              </div>
-              <div className={styles.field} style={{ flex: 1 }}>
-                <label className={styles.label} htmlFor="telephone">Téléphone</label>
-                <input id="telephone" className={styles.input} value={form.telephone} onChange={set('telephone')} />
-              </div>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="telephone">Téléphone (ligne dédiée aux conseils)</label>
+              <input id="telephone" className={styles.input} value={form.telephone} onChange={set('telephone')} />
             </div>
 
             <div className={styles.field}>
@@ -150,7 +159,7 @@ export default function AdminConseillersPage() {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="bio">Bio</label>
+              <label className={styles.label} htmlFor="bio">Bio (visible dans l&apos;annuaire)</label>
               <textarea id="bio" className={styles.textarea} value={form.bio} onChange={set('bio')} />
             </div>
 
@@ -163,7 +172,7 @@ export default function AdminConseillersPage() {
 
             <div className={styles.actions}>
               <Button type="submit" variant="primary" isLoading={saving}>
-                {editingId ? 'Enregistrer' : 'Ajouter le conseiller'}
+                {editingId ? 'Enregistrer' : 'Désigner comme conseiller'}
               </Button>
               {editingId && (
                 <button type="button" className={styles.iconBtn} onClick={resetForm}>
@@ -185,12 +194,17 @@ export default function AdminConseillersPage() {
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <thead>
-                  <tr><th>Nom</th><th>Contact</th><th>Spécialité</th><th>Statut</th><th></th></tr>
+                  <tr><th>Membre</th><th>Contact</th><th>Spécialité</th><th>Statut</th><th></th></tr>
                 </thead>
                 <tbody>
                   {items.map((c) => (
                     <tr key={c.id}>
-                      <td>{c.nom}</td>
+                      <td>
+                        <div className={styles.rowName}>
+                          <Avatar src={c.avatar_url} name={c.nom} size={32} />
+                          {c.nom}
+                        </div>
+                      </td>
                       <td>
                         {c.email && <div className="text-sm">{c.email}</div>}
                         {c.telephone && <div className="text-muted text-sm">{c.telephone}</div>}
@@ -208,7 +222,7 @@ export default function AdminConseillersPage() {
                           <button className={styles.iconBtn} onClick={() => toggleActive(c)} title={c.is_active ? 'Désactiver' : 'Activer'}>
                             {c.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
                           </button>
-                          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(c)} title="Supprimer"><Trash2 size={14} /></button>
+                          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(c)} title="Retirer"><Trash2 size={14} /></button>
                         </div>
                       </td>
                     </tr>
