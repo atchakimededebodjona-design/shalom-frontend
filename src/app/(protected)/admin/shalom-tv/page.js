@@ -1,11 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import shalomTvService from '../../../../services/shalom-tv.service';
 import { Plus, Edit2, Trash2, Video, Headphones, FileText, Image as ImageIcon, CheckCircle, XCircle } from 'lucide-react';
+import { useAuth } from '../../../../contexts/AuthContext';
 import styles from './admin-shalom-tv.module.css';
 
 export default function AdminShalomTvPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,9 +29,16 @@ export default function AdminShalomTvPage() {
   const [mediaFile, setMediaFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
 
+  // Garde d'accès : admins uniquement.
   useEffect(() => {
-    fetchContents();
-  }, []);
+    if (authLoading) return;
+    if (!user) { router.push('/login'); return; }
+    if (!user.is_admin) { router.push('/dashboard'); }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (user?.is_admin) fetchContents();
+  }, [user]);
 
   const fetchContents = async () => {
     try {
@@ -120,6 +132,14 @@ export default function AdminShalomTvPage() {
       default: return null;
     }
   };
+
+  if (authLoading || !user || !user.is_admin) {
+    return (
+      <div className="container flex justify-center items-center" style={{ minHeight: '60vh' }}>
+        <div className="animate-pulse">Chargement…</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
