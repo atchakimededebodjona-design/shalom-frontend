@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Printer, Share2, Trash2, CircleDollarSign, X } from 'lucide-react';
+import { Printer, Download, Trash2, CircleDollarSign, X } from 'lucide-react';
 import { billingService } from '../../../../../services/billing.service';
 import { formatFCFA, formatDateFR } from '../../../../../utils/format';
 import { getApiError } from '../../../../../utils/apiError';
@@ -55,14 +55,60 @@ export default function InvoiceDetailPage() {
     window.open(`${API_URL}/billing/invoices/${id}/print`, '_blank');
   };
 
-  const handleShare = async () => {
+  const handleDownload = async () => {
     setSharing(true);
     setError('');
     try {
-      const res = await billingService.getWhatsappLink(id);
-      window.open(res.data.whatsapp_url, '_blank');
+      // Importer dynamiquement pour ne pas alourdir la page
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDF = (await import('jspdf')).default;
+      
+      // Créer une iframe invisible pour rendre la facture exacte générée par le backend
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'absolute';
+      iframe.style.width = '720px';
+      iframe.style.height = '1400px';
+      iframe.style.left = '-9999px';
+      document.body.appendChild(iframe);
+      
+      const htmlRes = await fetch(`${API_URL}/billing/invoices/${id}/print`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } // Si sécurisé
+      });
+      const htmlText = await htmlRes.text();
+      
+      iframe.contentWindow.document.open();
+      iframe.contentWindow.document.write(htmlText);
+      iframe.contentWindow.document.close();
+      
+      // Attendre que l'image du logo soit chargée
+      await new Promise(r => setTimeout(r, 1500));
+      
+      // Nettoyer l'iframe des éléments qui ne doivent pas apparaître sur le PDF (bouton Imprimer, statuts, etc.)
+      const elementsToHide = iframe.contentWindow.document.querySelectorAll('.no-print');
+      elementsToHide.forEach(el => el.remove());
+      
+      // Capturer le contenu de l'iframe
+      const canvas = await html2canvas(iframe.contentWindow.document.body, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      
+      const fileName = `Facture_${invoice.invoice_number}.pdf`;
+      pdf.save(fileName);
+      
+      document.body.removeChild(iframe);
+      
     } catch (err) {
-      setError(getApiError(err, "Impossible de générer le lien de partage — le client a-t-il un numéro de téléphone ?"));
+      console.error(err);
+      setError(getApiError(err, "Impossible de générer le PDF."));
     } finally {
       setSharing(false);
     }
@@ -113,8 +159,8 @@ export default function InvoiceDetailPage() {
         </div>
 
         <div className="flex gap-sm" style={{ flexWrap: 'wrap', marginBottom: 'var(--spacing-md)' }}>
-          <Button variant="secondary" onClick={handlePrint} className="flex items-center gap-xs"><Printer size={16} /> Imprimer / PDF</Button>
-          <Button variant="secondary" onClick={handleShare} isLoading={sharing} className="flex items-center gap-xs"><Share2 size={16} /> Partager (WhatsApp)</Button>
+          <Button variant="secondary" onClick={handlePrint} className="flex items-center gap-xs"><Printer size={16} /> Imprimer</Button>
+          <Button variant="secondary" onClick={handleDownload} isLoading={sharing} className="flex items-center gap-xs"><Download size={16} /> Télécharger PDF</Button>
           {balanceDue > 0 && (
             <Button variant="accent" onClick={() => setPaymentModalOpen(true)} className="flex items-center gap-xs">
               <CircleDollarSign size={16} /> Enregistrer un paiement

@@ -31,10 +31,12 @@ export const NotificationItem = ({ notification, onRead, onNavigate }) => {
         /* non bloquant */
       }
     }
-    // Seul le suivi mène quelque part de fiable (le profil de l'acteur)
     if (notification.type === 'follow' && notification.actor_id) {
       onNavigate?.();
       router.push(`/users/${notification.actor_id}`);
+    } else if ((notification.type === 'like' || notification.type === 'comment') && notification.reference_id) {
+      onNavigate?.();
+      router.push(`/posts/${notification.reference_id}`);
     }
   };
 

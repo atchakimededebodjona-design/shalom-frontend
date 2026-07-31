@@ -1,8 +1,15 @@
 .bar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   padding: 1.25rem 0;
+  /* Fond opaque plutôt que le fond translucide de .glass : la barre est en
+     position fixed et se superpose désormais au contenu défilé derrière
+     elle (au lieu de scroller avec lui) — la transparence rendait le texte
+     du contenu sous-jacent lisible par-dessus le logo et les liens. */
+  background: var(--bg-color-alt);
   border-bottom: 1px solid var(--glass-border);
   transition: all 0.3s ease;
 }
@@ -108,12 +115,24 @@
   background: var(--glass-bg);
 }
 
-/* Panneau déroulant (mobile) */
+/* Panneau déroulant (mobile) — la barre est en position fixed, donc ce
+   panneau se superpose désormais au contenu de la page (au lieu de le
+   repousser comme avant) : il lui faut un fond opaque pour rester lisible,
+   et un défilement propre s'il dépasse l'espace restant à l'écran (beaucoup
+   de liens sur un petit téléphone), sans quoi les derniers liens et la
+   déconnexion seraient inatteignables. */
 .mobilePanel {
   display: flex;
   flex-direction: column;
   gap: 2px;
   padding: var(--spacing-sm) 0 var(--spacing-xs);
+  margin: 0 calc(-1 * clamp(1rem, 5vw, 2rem));
+  padding-left: clamp(1rem, 5vw, 2rem);
+  padding-right: clamp(1rem, 5vw, 2rem);
+  max-height: calc(100vh - 84px);
+  overflow-y: auto;
+  background: var(--bg-color-alt);
+  box-shadow: var(--shadow-md);
   animation: navSlide 0.18s ease;
 }
 
@@ -146,6 +165,12 @@
   margin: var(--spacing-xs) 0;
 }
 
+/* Réserve la même hauteur que .bar (mesurée : 84px mobile / 100px bureau)
+   puisque celle-ci est en position fixed et ne participe plus au flux. */
+.navSpacer {
+  height: 84px;
+}
+
 /* --- Bascule responsive --- */
 @media (max-width: 768px) {
   .desktopLinks { display: none; }
@@ -155,4 +180,5 @@
 
 @media (min-width: 769px) {
   .mobilePanel { display: none; }
+  .navSpacer { height: 100px; }
 }

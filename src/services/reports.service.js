@@ -1,8 +1,15 @@
 import api from './api';
 
-// Espace de modération (réservé aux administrateurs).
 // `target_type` : 'post' | 'comment' — `status` : 'en_attente' | 'traite' | 'rejete'
 export const reportsService = {
+  // Signaler un post ou un commentaire (tout membre connecté).
+  // reason: 'spam' | 'contenu_inapproprie' | 'harcelement' | 'faux_compte' | 'autre'
+  create: async ({ target_type, target_id, reason, details }) => {
+    const response = await api.post('/reports', { target_type, target_id, reason, details: details || undefined });
+    return response.data;
+  },
+
+  // Le reste est réservé aux administrateurs (modération).
   list: async ({ status, page = 1, limit = 20 } = {}) => {
     const params = { page, limit };
     if (status) params.status = status;

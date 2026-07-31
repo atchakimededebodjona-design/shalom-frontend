@@ -6,6 +6,7 @@ import { commentsService } from '../../services/comments.service';
 import { getApiError } from '../../utils/apiError';
 import { timeAgo } from '../../utils/date';
 import { Avatar } from '../ui/Avatar';
+import { ReportButton } from './ReportButton';
 
 export const CommentSection = ({ postId, currentUser, onCountChange }) => {
   const [comments, setComments] = useState([]);
@@ -113,7 +114,7 @@ export const CommentSection = ({ postId, currentUser, onCountChange }) => {
                       </div>
                       <span className="flex items-center gap-sm">
                         <span className="text-muted text-sm">{timeAgo(comment.created_at)}</span>
-                        {canDelete && (
+                        {canDelete ? (
                           <button
                             type="button"
                             onClick={() => handleDelete(comment.id)}
@@ -123,6 +124,8 @@ export const CommentSection = ({ postId, currentUser, onCountChange }) => {
                           >
                             <Trash2 size={14} />
                           </button>
+                        ) : (
+                          <ReportButton targetType="comment" targetId={comment.id} size={14} />
                         )}
                       </span>
                     </div>

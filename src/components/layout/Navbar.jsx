@@ -50,6 +50,7 @@ export const Navbar = () => {
   const fermer = () => setMenuOuvert(false);
 
   return (
+    <>
     <nav className={`glass ${styles.bar}`}>
       <div className="container">
         <div className={styles.inner}>
@@ -150,5 +151,9 @@ export const Navbar = () => {
         )}
       </div>
     </nav>
+    {/* Compense l'espace laissé vacant par la barre en position fixed,
+        pour que le contenu de la page ne démarre pas sous elle. */}
+    <div className={styles.navSpacer} aria-hidden="true" />
+    </>
   );
 };

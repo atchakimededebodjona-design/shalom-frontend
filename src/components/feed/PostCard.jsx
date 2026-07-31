@@ -11,6 +11,7 @@ import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 import { Avatar } from '../ui/Avatar';
 import { FollowButton } from '../follows/FollowButton';
 import { CommentSection } from './CommentSection';
+import { ReportButton } from './ReportButton';
 
 // Libellés des types affichés sous forme de pastille (le texte simple n'en a pas)
 const TYPE_LABELS = {
@@ -120,7 +121,7 @@ export const PostCard = ({ post, currentUser, onDeleted }) => {
             </span>
           )}
           <FollowButton userId={post.author_id} initialFollowing={post.is_following} size="sm" />
-          {isOwner && (
+          {isOwner ? (
             <button
               type="button"
               onClick={handleDelete}
@@ -139,6 +140,8 @@ export const PostCard = ({ post, currentUser, onDeleted }) => {
             >
               <Trash2 size={18} />
             </button>
+          ) : (
+            <ReportButton targetType="post" targetId={post.id} size={18} />
           )}
         </div>
       </header>
