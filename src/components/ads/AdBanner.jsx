@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Settings, Plus, Flag, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { adsService } from '../../services/ads.service';
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 import styles from './ads.module.css';
 
 // Une tuile = une image d'annonce. Repli sur le titre si l'image ne charge pas
@@ -34,7 +35,7 @@ function AdTile({ ad }) {
     <span className={styles.adFallback}>{ad.title}</span>
   ) : (
     <img
-      src={ad.image_url}
+      src={resolveMediaUrl(ad.image_url)}
       alt={ad.title}
       className={styles.adImg}
       loading="lazy"

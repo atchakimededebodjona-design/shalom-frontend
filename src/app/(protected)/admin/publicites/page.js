@@ -6,6 +6,7 @@ import { Megaphone, Pencil, Trash2, Eye, EyeOff, Upload, X, Flag, ChevronDown, C
 import { useAuth } from '../../../../contexts/AuthContext';
 import { adsService } from '../../../../services/ads.service';
 import { uploadService } from '../../../../services/upload.service';
+import { resolveMediaUrl } from '../../../../utils/resolveMediaUrl';
 import { BackButton } from '../../../../components/ui/BackButton';
 import { Button } from '../../../../components/ui/Button';
 import styles from './publicites.module.css';
@@ -175,7 +176,7 @@ export default function AdminPublicitesPage() {
               <label className={styles.label}>Image *</label>
               <div className={styles.preview}>
                 {form.image_url
-                  ? <img src={form.image_url} alt="Aperçu" />
+                  ? <img src={resolveMediaUrl(form.image_url)} alt="Aperçu" />
                   : <span>Aperçu de l'image</span>}
               </div>
               <div className={styles.row}>
@@ -240,7 +241,7 @@ export default function AdminPublicitesPage() {
                   {ads.map((ad) => (
                     <Fragment key={ad.id}>
                       <tr>
-                        <td><img className={styles.thumb} src={ad.image_url} alt={ad.title} /></td>
+                        <td><img className={styles.thumb} src={resolveMediaUrl(ad.image_url)} alt={ad.title} /></td>
                         <td>{ad.title}{ad.link_url ? <div className="text-muted text-sm">🔗 lien</div> : null}</td>
                         <td>{ad.display_order}</td>
                         <td>
