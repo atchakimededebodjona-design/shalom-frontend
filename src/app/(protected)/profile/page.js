@@ -74,7 +74,6 @@ export default function Profile() {
 
       <ProfileView
         profile={user}
-        email={user.email}
         followersCount={counts.followers}
         followingCount={counts.following}
         onOpenFollowers={() => setModal('followers')}

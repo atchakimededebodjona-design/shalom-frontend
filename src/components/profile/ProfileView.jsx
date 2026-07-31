@@ -44,7 +44,6 @@ const DetailRow = ({ icon, children }) =>
 // `onPhotoChange(field, url)` = callback appelé après upload réussi ; le parent persiste + rafraîchit.
 export const ProfileView = ({
   profile,
-  email,
   followersCount,
   followingCount,
   onOpenFollowers,
@@ -250,8 +249,6 @@ export const ProfileView = ({
           {profile.is_verified && <BadgeCheck size={24} color="var(--primary)" aria-label="Vérifié" />}
           {profile.is_ambassador && <Star size={22} color="var(--primary)" fill="var(--secondary)" className="animate-twinkle" aria-label="Ambassadeur certifié" />}
         </div>
-
-        {email && <p className="text-muted text-md" style={{ marginTop: 'var(--spacing-xs)' }}>{email}</p>}
 
         {profile.bio && <p style={{ marginTop: 'var(--spacing-md)', maxWidth: '480px', lineHeight: 1.6 }}>{profile.bio}</p>}
 
