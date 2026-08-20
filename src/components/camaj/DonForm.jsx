@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { Heart, Bell } from 'lucide-react';
-import { camajService } from '../../services/camaj.service';
+import { PAYS } from './camaj-constants';
+import { useCamajForm } from './useCamajForm';
+import { PhoneField, FormFeedback, SubmitButton } from './CamajFormFields';
 import styles from './CamajForm.module.css';
 
 // Accent orange pour ce formulaire (cf. CamajForm.module.css).
@@ -15,21 +17,6 @@ const IMPACTS = [
   { texte: '5K FCFA forme un jeune en leadership', couleur: '#012963' },
   { texte: '25K FCFA financent un micro-projet', couleur: '#FE5901' },
   { texte: '100K FCFA équipe une startup', couleur: '#328C28' },
-];
-
-const PAYS = [
-  'Togo', 'Bénin', 'Burkina Faso', "Côte d'Ivoire", 'Ghana', 'Mali', 'Niger',
-  'Nigeria', 'Sénégal', 'Cameroun', 'Gabon', 'Congo', 'RD Congo',
-  'France', 'Canada', 'Belgique', 'Autre',
-];
-
-const INDICATIFS = [
-  { code: 'TG', tel: '+228' }, { code: 'BJ', tel: '+229' }, { code: 'BF', tel: '+226' },
-  { code: 'CI', tel: '+225' }, { code: 'GH', tel: '+233' }, { code: 'ML', tel: '+223' },
-  { code: 'NE', tel: '+227' }, { code: 'NG', tel: '+234' }, { code: 'SN', tel: '+221' },
-  { code: 'CM', tel: '+237' }, { code: 'GA', tel: '+241' }, { code: 'CG', tel: '+242' },
-  { code: 'CD', tel: '+243' }, { code: 'FR', tel: '+33' }, { code: 'BE', tel: '+32' },
-  { code: 'CA', tel: '+1' },
 ];
 
 const MONTANTS = [5000, 10000, 25000, 50000, 100000];
@@ -54,41 +41,18 @@ const ETAT_INITIAL = {
 };
 
 export const DonForm = () => {
-  const [form, setForm] = useState(ETAT_INITIAL);
-  const [soumis, setSoumis] = useState(false);
+  const { form, handleChange, setField, soumis, envoi, erreur, handleSubmit } = useCamajForm('don', ETAT_INITIAL);
   const [montantTouche, setMontantTouche] = useState(false);
-  const [envoi, setEnvoi] = useState(false);
-  const [erreur, setErreur] = useState('');
 
   const montantValide = Number(form.montant) > 0;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((precedent) => ({ ...precedent, [name]: value }));
-    setSoumis(false);
-  };
-
-  const handleMontant = (valeur) => {
-    setForm((precedent) => ({ ...precedent, montant: String(valeur) }));
-    setSoumis(false);
-  };
+  const handleMontant = (valeur) => setField('montant', String(valeur));
 
   // On enregistre l'intention de don (aucun paiement n'est encaissé ici).
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = (e) => handleSubmit(e, () => {
     setMontantTouche(true);
-    if (!montantValide) return;
-    setErreur('');
-    setEnvoi(true);
-    try {
-      await camajService.submit('don', form);
-      setSoumis(true);
-    } catch (err) {
-      setErreur(err.response?.data?.error || "L'envoi a échoué. Vérifiez votre connexion et réessayez.");
-    } finally {
-      setEnvoi(false);
-    }
-  };
+    return montantValide;
+  });
 
   return (
     <div style={ACCENT}>
@@ -121,7 +85,7 @@ export const DonForm = () => {
         </span>
       </div>
 
-      <form className={styles.card} onSubmit={handleSubmit}>
+      <form className={styles.card} onSubmit={onSubmit}>
         <div className={styles.grid}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="nom">
@@ -144,30 +108,7 @@ export const DonForm = () => {
             </select>
           </div>
 
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="whatsapp">Numéro WhatsApp (Optionnel)</label>
-            <div className={styles.phoneRow}>
-              <select
-                name="indicatif"
-                value={form.indicatif}
-                onChange={handleChange}
-                aria-label="Indicatif téléphonique"
-              >
-                {INDICATIFS.map(({ code, tel }) => (
-                  <option key={code} value={tel}>{`${code} (${tel})`}</option>
-                ))}
-              </select>
-              <input
-                id="whatsapp"
-                name="whatsapp"
-                type="tel"
-                inputMode="tel"
-                placeholder="Numéro WhatsApp"
-                value={form.whatsapp}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+          <PhoneField form={form} handleChange={handleChange} required={false} label="Numéro WhatsApp (Optionnel)" />
 
           <div className={`${styles.field} ${styles.full}`}>
             <label className={styles.label} htmlFor="montant">
@@ -225,23 +166,13 @@ export const DonForm = () => {
             />
           </div>
 
-          {soumis && (
-            <p className={styles.notice} role="status">
-              Merci pour votre générosité ! Votre intention de don a bien été enregistrée.
-              Aucun paiement n&apos;a été effectué : vous serez contacté(e) personnellement dès
-              l&apos;ouverture de la collecte.
-            </p>
-          )}
+          <FormFeedback
+            soumis={soumis}
+            successMessage="Merci pour votre générosité ! Votre intention de don a bien été enregistrée. Aucun paiement n'a été effectué : vous serez contacté(e) personnellement dès l'ouverture de la collecte."
+            erreur={erreur}
+          />
 
-          {erreur && (
-            <p className={styles.noticeError} role="alert">{erreur}</p>
-          )}
-
-          <div className={styles.full}>
-            <button type="submit" className={`hover-lift ${styles.submit}`} disabled={envoi}>
-              {envoi ? 'Envoi…' : 'Confirmer le Don'}
-            </button>
-          </div>
+          <SubmitButton envoi={envoi} label="Confirmer le Don" />
         </div>
       </form>
     </div>

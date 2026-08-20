@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { X, AlertTriangle } from 'lucide-react';
 import { PREFERENCE_CONTACT } from '../../app/camaj/relation-aide/domaines';
 import { camajService } from '../../services/camaj.service';
+import { INDICATIFS } from './camaj-constants';
 import styles from '../../app/camaj/relation-aide/relation-aide.module.css';
 import champStyles from './CamajForm.module.css';
 
@@ -15,15 +16,6 @@ const hexVersDoux = (hex) => {
   const b = parseInt(n.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, 0.12)`;
 };
-
-const INDICATIFS = [
-  { code: 'TG', tel: '+228' }, { code: 'BJ', tel: '+229' }, { code: 'BF', tel: '+226' },
-  { code: 'CI', tel: '+225' }, { code: 'GH', tel: '+233' }, { code: 'ML', tel: '+223' },
-  { code: 'NE', tel: '+227' }, { code: 'NG', tel: '+234' }, { code: 'SN', tel: '+221' },
-  { code: 'CM', tel: '+237' }, { code: 'GA', tel: '+241' }, { code: 'CG', tel: '+242' },
-  { code: 'CD', tel: '+243' }, { code: 'FR', tel: '+33' }, { code: 'BE', tel: '+32' },
-  { code: 'CA', tel: '+1' },
-];
 
 const construireEtatInitial = (domaine) => {
   const etat = {

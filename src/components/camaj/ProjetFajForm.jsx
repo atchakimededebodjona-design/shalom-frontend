@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { Rocket, UploadCloud } from 'lucide-react';
 import { FILIERES } from '../../app/camaj/filieres';
-import { camajService } from '../../services/camaj.service';
+import { PAYS, compterMots } from './camaj-constants';
+import { useCamajForm } from './useCamajForm';
+import { PhoneField, ChoiceGroup, WordCountedField, FormFeedback, SubmitButton } from './CamajFormFields';
 import styles from './CamajForm.module.css';
 
 // Accent vert pour ce formulaire (cf. CamajForm.module.css).
@@ -20,21 +22,6 @@ const CRITERES = [
   'Engagement à plein temps',
 ];
 
-const PAYS = [
-  'Togo', 'Bénin', 'Burkina Faso', "Côte d'Ivoire", 'Ghana', 'Mali', 'Niger',
-  'Nigeria', 'Sénégal', 'Cameroun', 'Gabon', 'Congo', 'RD Congo',
-  'France', 'Canada', 'Belgique', 'Autre',
-];
-
-const INDICATIFS = [
-  { code: 'TG', tel: '+228' }, { code: 'BJ', tel: '+229' }, { code: 'BF', tel: '+226' },
-  { code: 'CI', tel: '+225' }, { code: 'GH', tel: '+233' }, { code: 'ML', tel: '+223' },
-  { code: 'NE', tel: '+227' }, { code: 'NG', tel: '+234' }, { code: 'SN', tel: '+221' },
-  { code: 'CM', tel: '+237' }, { code: 'GA', tel: '+241' }, { code: 'CG', tel: '+242' },
-  { code: 'CD', tel: '+243' }, { code: 'FR', tel: '+33' }, { code: 'BE', tel: '+32' },
-  { code: 'CA', tel: '+1' },
-];
-
 const BUDGETS = [
   'Moins de 500 000 FCFA',
   '500 000 – 1 000 000 FCFA',
@@ -47,8 +34,6 @@ const SOUTIENS = ['Financier', 'Mentorat', 'Équipement'];
 
 const MOTS_MIN = 100;
 const TAILLE_MAX = 5 * 1024 * 1024; // 5 Mo
-
-const compterMots = (texte) => texte.trim().split(/\s+/).filter(Boolean).length;
 
 const ETAT_INITIAL = {
   nom: '',
@@ -72,36 +57,16 @@ const ETAT_INITIAL = {
 };
 
 export const ProjetFajForm = () => {
-  const [form, setForm] = useState(ETAT_INITIAL);
-  const [soumis, setSoumis] = useState(false);
+  const { form, setField, handleChange, toggleValue, soumis, envoi, erreur, handleSubmit } = useCamajForm('faj', ETAT_INITIAL);
   const [descriptionTouche, setDescriptionTouche] = useState(false);
   const [soutiensTouche, setSoutiensTouche] = useState(false);
   const [fichierErreur, setFichierErreur] = useState('');
   const [associesTouche, setAssociesTouche] = useState(false);
-  const [envoi, setEnvoi] = useState(false);
-  const [erreur, setErreur] = useState('');
 
-  const mots = compterMots(form.description);
-  const motsSuffisants = mots >= MOTS_MIN;
+  const motsSuffisants = compterMots(form.description) >= MOTS_MIN;
   const soutiensManquants = form.soutiens.length === 0;
   const collectif = form.typeProjet === 'Projet collectif';
   const associesManquants = collectif && !form.associes.trim();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((precedent) => ({ ...precedent, [name]: value }));
-    setSoumis(false);
-  };
-
-  const handleSoutien = (valeur) => {
-    setForm((precedent) => ({
-      ...precedent,
-      soutiens: precedent.soutiens.includes(valeur)
-        ? precedent.soutiens.filter((s) => s !== valeur)
-        : [...precedent.soutiens, valeur],
-    }));
-    setSoumis(false);
-  };
 
   const handleFichier = (e) => {
     const fichier = e.target.files?.[0];
@@ -115,28 +80,16 @@ export const ProjetFajForm = () => {
       return;
     }
     setFichierErreur('');
-    setForm((precedent) => ({ ...precedent, fichier: fichier.name }));
-    setSoumis(false);
+    setField('fichier', fichier.name);
   };
 
   // Le PDF n'est pas téléversé : seul son nom (form.fichier) est transmis.
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = (e) => handleSubmit(e, () => {
     setDescriptionTouche(true);
     setSoutiensTouche(true);
     setAssociesTouche(true);
-    if (!motsSuffisants || soutiensManquants || associesManquants) return;
-    setErreur('');
-    setEnvoi(true);
-    try {
-      await camajService.submit('faj', form);
-      setSoumis(true);
-    } catch (err) {
-      setErreur(err.response?.data?.error || "L'envoi a échoué. Vérifiez votre connexion et réessayez.");
-    } finally {
-      setEnvoi(false);
-    }
-  };
+    return motsSuffisants && !soutiensManquants && !associesManquants;
+  });
 
   return (
     <div style={ACCENT}>
@@ -155,7 +108,7 @@ export const ProjetFajForm = () => {
         </ul>
       </section>
 
-      <form className={styles.card} onSubmit={handleSubmit}>
+      <form className={styles.card} onSubmit={onSubmit}>
         <div className={styles.grid}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="nom">
@@ -187,33 +140,7 @@ export const ProjetFajForm = () => {
             <input id="ville" name="ville" value={form.ville} onChange={handleChange} required />
           </div>
 
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="whatsapp">
-              Numéro WhatsApp<span className={styles.required}>*</span>
-            </label>
-            <div className={styles.phoneRow}>
-              <select
-                name="indicatif"
-                value={form.indicatif}
-                onChange={handleChange}
-                aria-label="Indicatif téléphonique"
-              >
-                {INDICATIFS.map(({ code, tel }) => (
-                  <option key={code} value={tel}>{`${code} (${tel})`}</option>
-                ))}
-              </select>
-              <input
-                id="whatsapp"
-                name="whatsapp"
-                type="tel"
-                inputMode="tel"
-                placeholder="Numéro WhatsApp"
-                value={form.whatsapp}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
+          <PhoneField form={form} handleChange={handleChange} />
 
           <div className={styles.field}>
             <label className={styles.label} htmlFor="email">
@@ -239,25 +166,15 @@ export const ProjetFajForm = () => {
             </select>
           </div>
 
-          <fieldset className={`${styles.field} ${styles.full}`} style={{ border: 'none', padding: 0, margin: 0 }}>
-            <legend className={styles.label} style={{ padding: 0 }}>
-              Type de projet<span className={styles.required}>*</span>
-            </legend>
-            <div className={styles.radioRow}>
-              {['Projet individuel', 'Projet collectif'].map((choix) => (
-                <label key={choix} className={styles.choice}>
-                  <input
-                    type="radio"
-                    name="typeProjet"
-                    value={choix}
-                    checked={form.typeProjet === choix}
-                    onChange={handleChange}
-                  />
-                  {choix}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <ChoiceGroup
+            type="radio"
+            name="typeProjet"
+            legend="Type de projet"
+            required
+            options={['Projet individuel', 'Projet collectif']}
+            value={form.typeProjet}
+            onChange={handleChange}
+          />
 
           {collectif && (
             <div className={`${styles.field} ${styles.full}`}>
@@ -285,32 +202,15 @@ export const ProjetFajForm = () => {
             </div>
           )}
 
-          <div className={`${styles.field} ${styles.full}`}>
-            <label className={styles.label} htmlFor="description">
-              Description du projet<span className={styles.required}>*</span>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              className={styles.textarea}
-              value={form.description}
-              onChange={handleChange}
-              onBlur={() => setDescriptionTouche(true)}
-              aria-describedby="compteur-description"
-              required
-            />
-            <span
-              id="compteur-description"
-              className={`${styles.counter} ${motsSuffisants ? styles.counterOk : styles.counterShort}`}
-            >
-              {mots} / {MOTS_MIN} mots minimum
-            </span>
-            {descriptionTouche && !motsSuffisants && (
-              <span className={styles.counterShort} style={{ fontSize: '0.8rem' }} role="alert">
-                Développez un peu : il manque {MOTS_MIN - mots} mot{MOTS_MIN - mots > 1 ? 's' : ''}.
-              </span>
-            )}
-          </div>
+          <WordCountedField
+            id="description"
+            label="Description du projet"
+            value={form.description}
+            onChange={handleChange}
+            onBlur={() => setDescriptionTouche(true)}
+            minWords={MOTS_MIN}
+            touched={descriptionTouche}
+          />
 
           <div className={`${styles.field} ${styles.full}`}>
             <label className={styles.label} htmlFor="probleme">
@@ -351,53 +251,27 @@ export const ProjetFajForm = () => {
             </select>
           </div>
 
-          <fieldset className={styles.field} style={{ border: 'none', padding: 0, margin: 0 }}>
-            <legend className={styles.label} style={{ padding: 0 }}>
-              Avez-vous suivi la formation CAMAJ ?<span className={styles.required}>*</span>
-            </legend>
-            <div className={styles.radioRow}>
-              {['Oui', 'Non'].map((choix) => (
-                <label key={choix} className={styles.choice}>
-                  <input
-                    type="radio"
-                    name="formationCamaj"
-                    value={choix}
-                    checked={form.formationCamaj === choix}
-                    onChange={handleChange}
-                  />
-                  {choix}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <ChoiceGroup
+            type="radio"
+            name="formationCamaj"
+            legend="Avez-vous suivi la formation CAMAJ ?"
+            required
+            full={false}
+            options={['Oui', 'Non']}
+            value={form.formationCamaj}
+            onChange={handleChange}
+          />
 
-          <fieldset
-            className={`${styles.field} ${styles.full}`}
-            style={{ border: 'none', padding: 0, margin: 0 }}
-          >
-            <legend className={styles.label} style={{ padding: 0 }}>
-              Types de soutien<span className={styles.required}>*</span>
-            </legend>
-            <div className={styles.checkColumn}>
-              {SOUTIENS.map((s) => (
-                <label key={s} className={styles.choice}>
-                  <input
-                    type="checkbox"
-                    name="soutiens"
-                    value={s}
-                    checked={form.soutiens.includes(s)}
-                    onChange={() => handleSoutien(s)}
-                  />
-                  {s}
-                </label>
-              ))}
-            </div>
-            {soutiensTouche && soutiensManquants && (
-              <span className={styles.counterShort} style={{ fontSize: '0.8rem' }} role="alert">
-                Choisissez au moins un type de soutien.
-              </span>
-            )}
-          </fieldset>
+          <ChoiceGroup
+            type="checkbox"
+            name="soutiens"
+            legend="Types de soutien"
+            required
+            options={SOUTIENS}
+            value={form.soutiens}
+            onChange={(v) => toggleValue('soutiens', v)}
+            error={soutiensTouche && soutiensManquants ? 'Choisissez au moins un type de soutien.' : null}
+          />
 
           <div className={`${styles.field} ${styles.full}`}>
             <label className={styles.label} htmlFor="fichier">Plan d&apos;affaires (PDF)</label>
@@ -427,22 +301,13 @@ export const ProjetFajForm = () => {
             )}
           </div>
 
-          {soumis && (
-            <p className={styles.notice} role="status">
-              Votre projet a bien été soumis. Merci ! L&apos;équipe du CAMAJ examinera votre
-              dossier et vous recontactera prochainement.
-            </p>
-          )}
+          <FormFeedback
+            soumis={soumis}
+            successMessage="Votre projet a bien été soumis. Merci ! L'équipe du CAMAJ examinera votre dossier et vous recontactera prochainement."
+            erreur={erreur}
+          />
 
-          {erreur && (
-            <p className={styles.noticeError} role="alert">{erreur}</p>
-          )}
-
-          <div className={styles.full}>
-            <button type="submit" className={`hover-lift ${styles.submit}`} disabled={envoi}>
-              {envoi ? 'Envoi…' : 'Soumettre le Projet'}
-            </button>
-          </div>
+          <SubmitButton envoi={envoi} label="Soumettre le Projet" />
         </div>
       </form>
     </div>
