@@ -218,11 +218,11 @@ export default function AdminConseillersPage() {
                       </td>
                       <td>
                         <div className={styles.rowActions}>
-                          <button className={styles.iconBtn} onClick={() => editConseiller(c)} title="Modifier"><Pencil size={14} /></button>
-                          <button className={styles.iconBtn} onClick={() => toggleActive(c)} title={c.is_active ? 'Désactiver' : 'Activer'}>
+                          <button className={styles.iconBtn} onClick={() => editConseiller(c)} title="Modifier" aria-label="Modifier"><Pencil size={14} /></button>
+                          <button className={styles.iconBtn} onClick={() => toggleActive(c)} title={c.is_active ? 'Désactiver' : 'Activer'} aria-label={c.is_active ? 'Désactiver' : 'Activer'}>
                             {c.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
                           </button>
-                          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(c)} title="Retirer"><Trash2 size={14} /></button>
+                          <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(c)} title="Retirer" aria-label="Retirer"><Trash2 size={14} /></button>
                         </div>
                       </td>
                     </tr>

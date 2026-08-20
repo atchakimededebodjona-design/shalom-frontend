@@ -255,6 +255,7 @@ export default function AdminPublicitesPage() {
                               className={`${styles.badge} ${styles.badgeReport}`}
                               onClick={() => toggleReports(ad)}
                               title="Voir les motifs"
+                              aria-label="Voir les motifs"
                             >
                               <Flag size={12} /> {ad.report_count}
                               {ouvert === ad.id ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -265,11 +266,11 @@ export default function AdminPublicitesPage() {
                         </td>
                         <td>
                           <div className={styles.rowActions}>
-                            <button className={styles.iconBtn} onClick={() => editAd(ad)} title="Modifier"><Pencil size={14} /></button>
-                            <button className={styles.iconBtn} onClick={() => toggleActive(ad)} title={ad.is_active ? 'Désactiver' : 'Activer'}>
+                            <button className={styles.iconBtn} onClick={() => editAd(ad)} title="Modifier" aria-label="Modifier"><Pencil size={14} /></button>
+                            <button className={styles.iconBtn} onClick={() => toggleActive(ad)} title={ad.is_active ? 'Désactiver' : 'Activer'} aria-label={ad.is_active ? 'Désactiver' : 'Activer'}>
                               {ad.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
                             </button>
-                            <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(ad)} title="Supprimer"><Trash2 size={14} /></button>
+                            <button className={`${styles.iconBtn} ${styles.iconBtnDanger}`} onClick={() => remove(ad)} title="Supprimer" aria-label="Supprimer"><Trash2 size={14} /></button>
                           </div>
                         </td>
                       </tr>

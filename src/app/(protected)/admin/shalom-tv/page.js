@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import shalomTvService from '../../../../services/shalom-tv.service';
 import { Plus, Edit2, Trash2, Video, Headphones, FileText, Image as ImageIcon, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { getApiError } from '../../../../utils/apiError';
 import styles from './admin-shalom-tv.module.css';
 
 export default function AdminShalomTvPage() {
@@ -86,7 +87,7 @@ export default function AdminShalomTvPage() {
       await shalomTvService.deleteContent(id);
       fetchContents();
     } catch (error) {
-      alert('Erreur lors de la suppression');
+      alert(getApiError(error, 'Erreur lors de la suppression'));
     }
   };
 
@@ -117,7 +118,7 @@ export default function AdminShalomTvPage() {
       setIsModalOpen(false);
       fetchContents();
     } catch (error) {
-      alert('Erreur lors de la sauvegarde: ' + (error.response?.data?.error || error.message));
+      alert(getApiError(error, 'Erreur lors de la sauvegarde'));
     } finally {
       setSubmitLoading(false);
     }
@@ -195,10 +196,10 @@ export default function AdminShalomTvPage() {
                     )}
                   </td>
                   <td className={styles.actionsCell}>
-                    <button onClick={() => handleOpenModal(content)} className={styles.iconBtn}>
+                    <button onClick={() => handleOpenModal(content)} className={styles.iconBtn} aria-label="Modifier" title="Modifier">
                       <Edit2 size={18} />
                     </button>
-                    <button onClick={() => handleDelete(content.id)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`}>
+                    <button onClick={() => handleDelete(content.id)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} aria-label="Supprimer" title="Supprimer">
                       <Trash2 size={18} />
                     </button>
                   </td>
@@ -222,7 +223,7 @@ export default function AdminShalomTvPage() {
               <h2 className={styles.modalTitle}>
                 {editingContent ? 'Modifier le contenu' : 'Ajouter un contenu'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className={styles.closeBtn}>
+              <button onClick={() => setIsModalOpen(false)} className={styles.closeBtn} aria-label="Fermer" title="Fermer">
                 <XCircle size={24} />
               </button>
             </div>
