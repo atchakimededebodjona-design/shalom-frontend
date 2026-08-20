@@ -1,6 +1,12 @@
 // Origines des médias servis par le backend (avatars, posts, jeux...) — voir
-// resolveMediaUrl.js. À compléter avec le domaine réel lors du déploiement.
-const BACKEND_ORIGINS = ['http://localhost:5000', 'http://192.168.1.73:5000'];
+// resolveMediaUrl.js. En production, BACKEND_ORIGINS doit être défini (liste
+// séparée par des virgules) sinon le build pointerait vers localhost.
+const BACKEND_ORIGINS = (process.env.BACKEND_ORIGINS || 'http://localhost:5000,http://192.168.1.73:5000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const primaryBackendOrigin = BACKEND_ORIGINS[0];
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -35,8 +41,10 @@ const nextConfig = {
     // qu'on l'autorise à charger — un wildcard ouvre un SSRF vers le réseau
     // interne une fois le site en ligne.
     remotePatterns: [
-      { protocol: 'http', hostname: 'localhost', port: '5000' },
-      { protocol: 'http', hostname: '192.168.1.73', port: '5000' },
+      ...BACKEND_ORIGINS.map((origin) => {
+        const url = new URL(origin);
+        return { protocol: url.protocol.replace(':', ''), hostname: url.hostname, port: url.port };
+      }),
       { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
   },
@@ -59,11 +67,11 @@ const nextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: 'http://localhost:5000/api/v1/:path*',
+        destination: `${primaryBackendOrigin}/api/v1/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: 'http://localhost:5000/uploads/:path*',
+        destination: `${primaryBackendOrigin}/uploads/:path*`,
       },
     ];
   },
