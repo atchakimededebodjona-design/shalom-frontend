@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Users } from 'lucide-react';
 import { VISIBILITY_LABELS } from '../../services/groups.service';
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 
 export const GroupCard = ({ group }) => {
   return (
@@ -23,7 +24,7 @@ export const GroupCard = ({ group }) => {
         style={{
           height: '110px',
           background: group.cover_url
-            ? `center / cover no-repeat url(${group.cover_url})`
+            ? `center / cover no-repeat url(${resolveMediaUrl(group.cover_url)})`
             : 'var(--gradient-primary)',
         }}
       />

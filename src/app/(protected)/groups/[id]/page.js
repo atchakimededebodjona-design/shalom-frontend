@@ -6,6 +6,7 @@ import { Users, Pencil, Trash2, LogOut } from 'lucide-react';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { groupsService, VISIBILITY_LABELS } from '../../../../services/groups.service';
 import { getApiError } from '../../../../utils/apiError';
+import { resolveMediaUrl } from '../../../../utils/resolveMediaUrl';
 import { MemberRow } from '../../../../components/groups/MemberRow';
 import { GroupEditForm } from '../../../../components/groups/GroupEditForm';
 import { Modal } from '../../../../components/ui/Modal';
@@ -147,7 +148,7 @@ export default function GroupDetailPage() {
           style={{
             height: '160px',
             background: group.cover_url
-              ? `center / cover no-repeat url(${group.cover_url})`
+              ? `center / cover no-repeat url(${resolveMediaUrl(group.cover_url)})`
               : 'linear-gradient(120deg, var(--primary), var(--secondary))',
           }}
         />
