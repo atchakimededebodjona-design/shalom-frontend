@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { profilesService } from '../../../services/profiles.service';
-import { getApiError } from '../../../utils/apiError';
+import { usePaginatedFetch } from '../../../hooks/usePaginatedFetch';
 import { Avatar } from '../../../components/ui/Avatar';
 import { FollowButton } from '../../../components/follows/FollowButton';
 import { Button } from '../../../components/ui/Button';
@@ -20,11 +20,6 @@ export default function SearchPage() {
 
   const [input, setInput] = useState('');
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/login');
@@ -36,50 +31,30 @@ export default function SearchPage() {
     return () => clearTimeout(t);
   }, [input]);
 
-  const runSearch = useCallback(
-    async (q) => {
-      setLoading(true);
-      setError('');
-      try {
-        const res = await profilesService.search(q, { page: 1, limit: PAGE_SIZE });
-        setResults(res.data.profiles);
-        setPagination(res.data.pagination);
-      } catch (err) {
-        setError(getApiError(err, 'Recherche impossible'));
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+  const fetchPage = useCallback(async (page) => {
+    const res = await profilesService.search(query, { page, limit: PAGE_SIZE });
+    return { items: res.data.profiles, pagination: res.data.pagination };
+  }, [query]);
+
+  const {
+    items: results, pagination, loading, loadingMore, error, setItems, setPagination, setError, reload, loadMore,
+  } = usePaginatedFetch(fetchPage, {
+    getKey: (p) => p.user_id,
+    initialLoading: false,
+    errorMessage: 'Recherche impossible',
+  });
 
   useEffect(() => {
     if (!user) return;
     if (!query) {
-      setResults([]);
+      setItems([]);
       setPagination(null);
       setError('');
       return;
     }
-    runSearch(query);
-  }, [query, user, runSearch]);
-
-  const handleLoadMore = async () => {
-    if (!pagination?.has_next || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const res = await profilesService.search(query, { page: pagination.page + 1, limit: PAGE_SIZE });
-      setResults((prev) => {
-        const seen = new Set(prev.map((p) => p.user_id));
-        return [...prev, ...res.data.profiles.filter((p) => !seen.has(p.user_id))];
-      });
-      setPagination(res.data.pagination);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger plus'));
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+    reload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, user]);
 
   if (authLoading || !user) {
     return (
@@ -145,7 +120,7 @@ export default function SearchPage() {
 
           {pagination?.has_next && (
             <div className="flex justify-center" style={{ marginTop: 'var(--spacing-md)' }}>
-              <Button variant="secondary" onClick={handleLoadMore} isLoading={loadingMore}>Charger plus</Button>
+              <Button variant="secondary" onClick={loadMore} isLoading={loadingMore}>Charger plus</Button>
             </div>
           )}
         </div>

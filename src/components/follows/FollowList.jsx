@@ -1,69 +1,34 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { followsService } from '../../services/follows.service';
-import { getApiError } from '../../utils/apiError';
+import { usePaginatedFetch } from '../../hooks/usePaginatedFetch';
 import { Avatar } from '../ui/Avatar';
 import { FollowButton } from './FollowButton';
 
 // type : 'followers' | 'following'
 export const FollowList = ({ userId, type, onItemClick }) => {
-  const [items, setItems] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState('');
-
   const fetchPage = useCallback(
     async (page) => {
       const res =
         type === 'followers'
           ? await followsService.getFollowers(userId, { page, limit: 20 })
           : await followsService.getFollowing(userId, { page, limit: 20 });
-      const list = type === 'followers' ? res.data.followers : res.data.following;
-      return { list, pagination: res.data.pagination };
+      const items = type === 'followers' ? res.data.followers : res.data.following;
+      return { items, pagination: res.data.pagination };
     },
     [userId, type]
   );
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const { list, pagination: pg } = await fetchPage(1);
-        if (!active) return;
-        setItems(list);
-        setPagination(pg);
-      } catch (err) {
-        if (active) setError(getApiError(err, 'Impossible de charger la liste'));
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [fetchPage]);
+  const {
+    items, pagination, loading, loadingMore, error, reload, loadMore,
+  } = usePaginatedFetch(fetchPage, {
+    getKey: (it) => it.profile?.user_id,
+    errorMessage: 'Impossible de charger la liste',
+  });
 
-  const handleLoadMore = async () => {
-    if (!pagination?.has_next || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const { list, pagination: pg } = await fetchPage(pagination.page + 1);
-      setItems((prev) => {
-        const seen = new Set(prev.map((it) => it.profile?.user_id));
-        return [...prev, ...list.filter((it) => !seen.has(it.profile?.user_id))];
-      });
-      setPagination(pg);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger plus'));
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+  useEffect(() => { reload(); }, [reload]);
 
   if (loading) {
     return <p className="text-muted text-sm animate-pulse">Chargement…</p>;
@@ -110,7 +75,7 @@ export const FollowList = ({ userId, type, onItemClick }) => {
       {pagination?.has_next && (
         <button
           type="button"
-          onClick={handleLoadMore}
+          onClick={loadMore}
           disabled={loadingMore}
           className="hover-lift"
           style={{

@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Inbox } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { messagesService } from '../../../services/messages.service';
-import { getApiError } from '../../../utils/apiError';
+import { usePaginatedFetch } from '../../../hooks/usePaginatedFetch';
 import { ConversationRow } from '../../../components/messages/ConversationRow';
 import { Button } from '../../../components/ui/Button';
 import { PageHeader } from '../../../components/ui/PageHeader';
@@ -16,50 +16,22 @@ export default function MessagesInboxPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [conversations, setConversations] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState('');
+  const fetchPage = useCallback(async (page) => {
+    const res = await messagesService.getConversations({ page, limit: PAGE_SIZE });
+    return { items: res.data.conversations, pagination: res.data.pagination };
+  }, []);
+
+  const {
+    items: conversations, pagination, loading, loadingMore, error, reload, loadMore,
+  } = usePaginatedFetch(fetchPage, { errorMessage: 'Impossible de charger les conversations' });
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/login');
   }, [authLoading, user, router]);
 
-  const loadFirst = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await messagesService.getConversations({ page: 1, limit: PAGE_SIZE });
-      setConversations(res.data.conversations);
-      setPagination(res.data.pagination);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger les conversations'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    if (user) loadFirst();
-  }, [user, loadFirst]);
-
-  const handleLoadMore = async () => {
-    if (!pagination?.has_next || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const res = await messagesService.getConversations({ page: pagination.page + 1, limit: PAGE_SIZE });
-      setConversations((prev) => {
-        const seen = new Set(prev.map((c) => c.id));
-        return [...prev, ...res.data.conversations.filter((c) => !seen.has(c.id))];
-      });
-      setPagination(res.data.pagination);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger plus'));
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+    if (user) reload();
+  }, [user, reload]);
 
   if (authLoading || !user) {
     return (
@@ -98,7 +70,7 @@ export default function MessagesInboxPage() {
 
           {pagination?.has_next && (
             <div className="flex justify-center" style={{ marginTop: 'var(--spacing-md)' }}>
-              <Button variant="secondary" onClick={handleLoadMore} isLoading={loadingMore}>Charger plus</Button>
+              <Button variant="secondary" onClick={loadMore} isLoading={loadingMore}>Charger plus</Button>
             </div>
           )}
         </div>

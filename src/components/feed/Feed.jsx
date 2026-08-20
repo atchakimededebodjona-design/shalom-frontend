@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { postsService } from '../../services/posts.service';
-import { getApiError } from '../../utils/apiError';
+import { usePaginatedFetch } from '../../hooks/usePaginatedFetch';
 import { PostComposer } from './PostComposer';
 import { PostCard } from './PostCard';
 
@@ -11,57 +11,18 @@ const PAGE_SIZE = 10;
 
 export const Feed = ({ groupId, showComposer = true, emptyMessage }) => {
   const { user } = useAuth();
-  const [posts, setPosts] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState('');
 
   const fetchPage = useCallback(async (page) => {
     const res = await postsService.getFeed({ page, limit: PAGE_SIZE, groupId });
-    return res.data; // { posts, pagination }
+    return { items: res.data.posts, pagination: res.data.pagination };
   }, [groupId]);
 
-  // Chargement initial
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const data = await fetchPage(1);
-        if (!active) return;
-        setPosts(data.posts);
-        setPagination(data.pagination);
-      } catch (err) {
-        if (active) setError(getApiError(err, 'Impossible de charger le fil'));
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [fetchPage]);
+  const {
+    items: posts, setItems: setPosts, pagination, loading, loadingMore, error, reload, loadMore,
+  } = usePaginatedFetch(fetchPage, { errorMessage: 'Impossible de charger le fil' });
 
-  const handleLoadMore = async () => {
-    if (!pagination?.has_next || loadingMore) return;
-    setLoadingMore(true);
-    setError('');
-    try {
-      const data = await fetchPage(pagination.page + 1);
-      // Dédoublonnage défensif (un nouveau post créé peut décaler la pagination)
-      setPosts((prev) => {
-        const seen = new Set(prev.map((p) => p.id));
-        return [...prev, ...data.posts.filter((p) => !seen.has(p.id))];
-      });
-      setPagination(data.pagination);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger plus de publications'));
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+  // Chargement initial (et rechargement si on change de groupe)
+  useEffect(() => { reload(); }, [reload]);
 
   const handleCreated = (post) => {
     // Le nouveau post arrive du POST /posts sans author_profile → on l'injecte
@@ -114,7 +75,7 @@ export const Feed = ({ groupId, showComposer = true, emptyMessage }) => {
           {pagination?.has_next && (
             <button
               type="button"
-              onClick={handleLoadMore}
+              onClick={loadMore}
               disabled={loadingMore}
               className="glass hover-lift"
               style={{

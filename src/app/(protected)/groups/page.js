@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search, Plus } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { groupsService } from '../../../services/groups.service';
-import { getApiError } from '../../../utils/apiError';
+import { usePaginatedFetch } from '../../../hooks/usePaginatedFetch';
 import { GroupCard } from '../../../components/groups/GroupCard';
 import { CreateGroupForm } from '../../../components/groups/CreateGroupForm';
 import { Modal } from '../../../components/ui/Modal';
@@ -18,11 +18,6 @@ export default function GroupsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [groups, setGroups] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
   const [showCreate, setShowCreate] = useState(false);
@@ -31,55 +26,22 @@ export default function GroupsPage() {
     if (!authLoading && !user) router.push('/login');
   }, [authLoading, user, router]);
 
-  const fetchPage = useCallback(
-    async (page, search) => {
-      const res = await groupsService.list({ page, limit: PAGE_SIZE, search: search || undefined });
-      return res.data;
-    },
-    []
-  );
+  const fetchPage = useCallback(async (page) => {
+    const res = await groupsService.list({ page, limit: PAGE_SIZE, search: activeSearch || undefined });
+    return { items: res.data.groups, pagination: res.data.pagination };
+  }, [activeSearch]);
 
-  const loadFirst = useCallback(
-    async (search) => {
-      setLoading(true);
-      setError('');
-      try {
-        const data = await fetchPage(1, search);
-        setGroups(data.groups);
-        setPagination(data.pagination);
-      } catch (err) {
-        setError(getApiError(err, 'Impossible de charger les groupes'));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [fetchPage]
-  );
+  const {
+    items: groups, pagination, loading, loadingMore, error, reload, loadMore,
+  } = usePaginatedFetch(fetchPage, { errorMessage: 'Impossible de charger les groupes' });
 
   useEffect(() => {
-    if (user) loadFirst(activeSearch);
-  }, [user, activeSearch, loadFirst]);
+    if (user) reload();
+  }, [user, activeSearch, reload]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     setActiveSearch(searchInput.trim());
-  };
-
-  const handleLoadMore = async () => {
-    if (!pagination?.has_next || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const data = await fetchPage(pagination.page + 1, activeSearch);
-      setGroups((prev) => {
-        const seen = new Set(prev.map((g) => g.id));
-        return [...prev, ...data.groups.filter((g) => !seen.has(g.id))];
-      });
-      setPagination(data.pagination);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger plus'));
-    } finally {
-      setLoadingMore(false);
-    }
   };
 
   const handleCreated = (group) => {
@@ -160,7 +122,7 @@ export default function GroupsPage() {
 
           {pagination?.has_next && (
             <div className="flex justify-center" style={{ marginTop: 'var(--spacing-lg)' }}>
-              <Button variant="secondary" onClick={handleLoadMore} isLoading={loadingMore}>Charger plus</Button>
+              <Button variant="secondary" onClick={loadMore} isLoading={loadingMore}>Charger plus</Button>
             </div>
           )}
         </>

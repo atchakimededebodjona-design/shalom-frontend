@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Plus, Undo2 } from 'lucide-react';
 import { walletService } from '../../../../services/wallet.service';
+import { usePaginatedFetch } from '../../../../hooks/usePaginatedFetch';
 import { Button } from '../../../../components/ui/Button';
 import { Modal } from '../../../../components/ui/Modal';
 import { MovementForm } from '../../../../components/wallet/MovementForm';
@@ -33,29 +34,20 @@ const STATUS_BADGE = {
 
 export default function WalletTransactionsPage() {
   const [categories, setCategories] = useState([]);
-  const [items, setItems] = useState([]);
-  const [pagination, setPagination] = useState(null);
   const [filters, setFilters] = useState({ type: '', source: '' });
   const [creating, setCreating] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  const fetchPage = useCallback(async (page, replace) => {
+  const fetchPage = useCallback(async (page) => {
     const params = { page, limit: PAGE_SIZE };
     if (filters.type) params.type = filters.type;
     if (filters.source) params.source = filters.source;
     const res = await walletService.listTransactions(params);
-    setPagination(res.data.pagination);
-    setItems((prev) => (replace ? res.data.transactions : [...prev, ...res.data.transactions]));
+    return { items: res.data.transactions, pagination: res.data.pagination };
   }, [filters]);
 
-  const reload = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try { await fetchPage(1, true); }
-    catch (err) { setError(err.response?.data?.error || 'Chargement impossible.'); }
-    finally { setLoading(false); }
-  }, [fetchPage]);
+  const { items, pagination, loading, error, setError, reload, loadMore } = usePaginatedFetch(fetchPage, {
+    errorMessage: 'Chargement impossible.',
+  });
 
   useEffect(() => {
     walletService.listCategories().then((r) => setCategories(r.data.categories)).catch(() => {});
@@ -148,7 +140,7 @@ export default function WalletTransactionsPage() {
             </div>
             {pagination?.has_next && (
               <div className="text-center mt-md">
-                <Button variant="secondary" onClick={() => fetchPage(pagination.page + 1, false)}>Charger plus</Button>
+                <Button variant="secondary" onClick={loadMore}>Charger plus</Button>
               </div>
             )}
           </>

@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, UserRound } from 'lucide-react';
 import { useBilling } from '../layout';
 import { billingService } from '../../../../services/billing.service';
 import { getApiError } from '../../../../utils/apiError';
+import { usePaginatedFetch } from '../../../../hooks/usePaginatedFetch';
 import { Button } from '../../../../components/ui/Button';
 import { Modal } from '../../../../components/ui/Modal';
 import { ClientForm } from '../../../../components/billing/ClientForm';
@@ -15,28 +16,20 @@ const PAGE_SIZE = 20;
 
 export default function BillingClientsPage() {
   const { business } = useBilling();
-  const [clients, setClients] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [modal, setModal] = useState(null); // 'create' | client object | null
   const [deletingId, setDeletingId] = useState(null);
 
-  const fetchPage = useCallback(async (page, replace) => {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await billingService.listClients({ page, limit: PAGE_SIZE });
-      setClients((prev) => (replace ? res.data.clients : [...prev, ...res.data.clients]));
-      setPagination(res.data.pagination);
-    } catch (err) {
-      setError(getApiError(err, 'Impossible de charger les clients'));
-    } finally {
-      setLoading(false);
-    }
+  const fetchPage = useCallback(async (page) => {
+    const res = await billingService.listClients({ page, limit: PAGE_SIZE });
+    return { items: res.data.clients, pagination: res.data.pagination };
   }, []);
 
-  useEffect(() => { if (business) fetchPage(1, true); }, [business, fetchPage]);
+  const { items: clients, setItems: setClients, pagination, setPagination, loading, error, reload, loadMore } = usePaginatedFetch(fetchPage, {
+    separateLoadingMore: false,
+    errorMessage: 'Impossible de charger les clients',
+  });
+
+  useEffect(() => { if (business) reload(); }, [business, reload]);
 
   if (!business) {
     return <p className={financeStyles.empty}>Configurez d&apos;abord votre entreprise depuis le tableau de bord.</p>;
@@ -45,13 +38,13 @@ export default function BillingClientsPage() {
   const handleCreate = async (payload) => {
     await billingService.createClient(payload);
     setModal(null);
-    await fetchPage(1, true);
+    await reload();
   };
 
   const handleUpdate = async (payload) => {
     await billingService.updateClient(modal.id, payload);
     setModal(null);
-    await fetchPage(1, true);
+    await reload();
   };
 
   const handleDelete = async (client) => {
@@ -111,7 +104,7 @@ export default function BillingClientsPage() {
 
       {pagination?.has_next && (
         <div className="flex justify-center" style={{ marginTop: 'var(--spacing-md)' }}>
-          <Button variant="secondary" isLoading={loading} onClick={() => fetchPage(pagination.page + 1, false)}>
+          <Button variant="secondary" isLoading={loading} onClick={loadMore}>
             Charger plus
           </Button>
         </div>
