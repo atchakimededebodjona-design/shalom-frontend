@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import ambassadorService from '../../../services/ambassador.service';
+import ambassadorService from '../../../../services/ambassador.service';
 
 export default function JoinAmbassador() {
   const router = useRouter();
