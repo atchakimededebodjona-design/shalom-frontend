@@ -1,8 +1,8 @@
 import api from './api';
 
-// Module Publicit├®s (espace publicitaire du tableau de bord).
-// Lecture des annonces actives ouverte ├á tout utilisateur connect├® ; la gestion
-// (listAll / create / update / remove) est r├®serv├®e aux administrateurs c├┤t├® API.
+// Module Publicités (espace publicitaire du tableau de bord).
+// Lecture des annonces actives ouverte à tout utilisateur connecté ; la gestion
+// (listAll / create / update / remove) est réservée aux administrateurs côté API.
 export const adsService = {
   list: async () => (await api.get('/ads')).data,            // annonces actives (bandeau)
   listAll: async () => (await api.get('/ads/manage')).data,  // toutes (admin) + report_count
