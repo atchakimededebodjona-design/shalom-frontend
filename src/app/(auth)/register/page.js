@@ -13,6 +13,7 @@ export default function Register() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     display_name: ''
   });
   const [error, setError] = useState('');
@@ -25,9 +26,14 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (formData.password !== formData.confirmPassword) {
+      setError('Les mots de passe ne correspondent pas.');
+      return;
+    }
     setLoading(true);
     try {
-      await register(formData);
+      const { confirmPassword, ...payload } = formData;
+      await register(payload);
     } catch (err) {
       const data = err.response?.data;
       const messages = Array.isArray(data?.details)
@@ -79,6 +85,14 @@ export default function Register() {
             Au moins 8 caractères, dont une majuscule et un chiffre.
           </p>
         </div>
+        <Input
+          type="password"
+          id="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          required
+          placeholder="Confirmer le mot de passe"
+        />
         <Button type="submit" variant="primary" isLoading={loading} style={{ width: '100%' }}>
           S'inscrire
         </Button>

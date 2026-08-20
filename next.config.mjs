@@ -34,7 +34,7 @@ const CSP = [
 const nextConfig = {
   reactStrictMode: true,
   // Autorise l'accès en dev depuis un autre appareil du réseau local (ex: test mobile)
-  allowedDevOrigins: ['192.168.1.73'],
+  allowedDevOrigins: ['192.168.1.73', '192.168.1.70'],
   images: {
     // Hôtes explicites uniquement (pas de wildcard '**') : le endpoint
     // d'optimisation d'image de Next.js (/_next/image?url=...) proxie ce
